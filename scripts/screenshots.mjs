@@ -202,7 +202,14 @@ async function capture(name) {
   await sleep(250);
   // screencapture and sips report some failures only on stderr, so check files.
   const raw = join(scratch, `${name}.png`);
-  try { run("screencapture", ["-x", "-l", windowId, raw], { stdio: ["ignore", "pipe", "pipe"] }); } catch { /* checked below */ }
+  // Right after launch the window can be composited before its first paint,
+  // which captures as a blank sheet (a tiny PNG); retry until it has content.
+  for (let attempt = 0; attempt < 6; attempt++) {
+    rmSync(raw, { force: true });
+    try { run("screencapture", ["-x", "-l", windowId, raw], { stdio: ["ignore", "pipe", "pipe"] }); } catch { /* checked below */ }
+    if (nonEmpty(raw) && statSync(raw).size > 80_000) break;
+    await sleep(700);
+  }
   if (!nonEmpty(raw)) {
     throw new Error("screencapture produced no image: grant Screen Recording to this terminal in System Settings → Privacy & Security");
   }
@@ -441,6 +448,19 @@ async function shoot() {
     await qtWindows();
   } catch (err) {
     console.warn(`! skipped Browse/Add: ${err.message} (the running Anki needs MX_DEV=1)`);
+  }
+
+  console.log("Preferences (off-screen)");
+  try {
+    // Light only: native tabs and check boxes cannot be simulated in dark.
+    await main("pycmd('mx:open:prefs'), true");
+    await sleep(2500);
+    await grabWindow("prefs", join(OUT, "preferences-light.png"));
+  } catch (err) {
+    console.warn(`! skipped preferences: ${err.message}`);
+  } finally {
+    await main("pycmd('mx:close:prefs'), true");
+    await sleep(2500);
   }
 
   console.log("Statistics (off-screen)");

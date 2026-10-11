@@ -362,6 +362,11 @@ Icons are Lucide outlines on a 24px grid, drawn at 16px (17px in round buttons, 
 - **Buttons:** 8px-corner field surfaces with a 1px edge. **Add** is the accent fill with on-accent 600 text.
 - **Scroll bars:** thin overlay-style handles (fill strong, 3px corners), since a stylesheet replaces the native ones.
 
+### Preferences (Qt)
+- **Ground:** the window ground, with the tab frame removed and native tabs and check boxes kept.
+- **Groups:** each QGroupBox is a group-surface panel with a 1px separator edge, 12px corners and 12px by 14px padding. The section title sits above it in the primary label at 600.
+- **Buttons and fields:** the shared button style and the app-wide field style.
+
 ### Statistics
 - **Range bar:** the toolbar strip (bar colour with a hairline under it) holding the deck/collection and period choices as segmented controls, plus a 26px search field.
 - **Segmented control from radios:** the track (fill) is drawn on the labels, 8px at the outer corners, 26px tall, 500 12px. The checked label is a raised segment pill. The radio itself is visually hidden but stays focusable, with the accent focus ring on its label.

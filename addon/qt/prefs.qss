@@ -1,0 +1,42 @@
+/* Preferences, styled like System Settings: white grouped panels with a
+   section title above, on the window ground. Tabs and check boxes stay
+   native; fields come from fields.qss. */
+
+QDialog { background: @ground@; }
+
+QTabWidget::pane { border: none; background: transparent; }
+QTabWidget > QWidget { background: transparent; }
+
+QGroupBox {
+    background: @group@;
+    border: 1px solid @separator@;
+    border-radius: 12px;
+    margin-top: 26px;
+    padding: 12px 14px 10px 14px;
+    font-size: 13px;
+    color: @label@;
+}
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    left: 4px;
+    padding: 0 0 6px 0;
+    color: @label@;
+    font-weight: 600;
+}
+
+QLabel, QCheckBox, QRadioButton { color: @label@; font-size: 13px; }
+QCheckBox, QRadioButton { spacing: 8px; }
+
+QPushButton {
+    background: @field@;
+    border: 1px solid @field_edge@;
+    border-radius: 8px;
+    padding: 5px 16px;
+    min-height: 18px;
+    font-size: 13px;
+    color: @label@;
+}
+QPushButton:hover { background: @hover@; }
+QPushButton:pressed { background: @fill_strong@; }
+QPushButton:disabled { color: @label3@; }

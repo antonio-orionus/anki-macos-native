@@ -44,7 +44,7 @@ On SvelteKit pages, style by Anki's stable component classes (`.deck-options-pag
    - **Never send `ease1`–`ease4`.** Grading changes the user's scheduling.
 5. `MX_DEV=1` enables two dev commands:
    - `pycmd('mx:shot:<path>')` saves `mw.grab()` (no title bar).
-   - `pycmd('mx:open:browser')` / `mx:open:add` / `mx:open:stats` open the real window **off-screen** without activating it. `mx:grab:<name>:<path>` renders it, `mx:reloadqss` re-reads `qt/*.qss` into it (no relaunch needed), and `mx:close:<name>` closes it. Always close previews before quitting Anki: Anki saves window geometry on close, and dev.py restores the user's saved geometry, including again 2 s later, because Add Cards saves only after an async check.
+   - `pycmd('mx:open:browser')` / `mx:open:add` / `mx:open:stats` / `mx:open:prefs` open the real window **off-screen** without activating it. `mx:grab:<name>:<path>` renders it, `mx:reloadqss` re-reads `qt/*.qss` into it (no relaunch needed), and `mx:close:<name>` closes it. Always close previews before quitting Anki: Anki saves window geometry on close, and dev.py restores the user's saved geometry, including again 2 s later, because Add Cards saves only after an async check.
    - `pycmd('mx:gallery:<path>')` renders every input type under the app stylesheet, light and dark.
    - To see tags without touching the collection, set tags on the **unsaved** Add draft with pyeval (`windows["add"].editor.note.tags = […]; editor.loadNote()`), capture, then clear them.
    - `pycmd('mx:pyeval:<path>|<expr>')` writes `repr(eval(expr))` to a file, with `mw` and `windows` (open previews) in scope. Use it to inspect widgets instead of guessing.
@@ -80,6 +80,7 @@ On SvelteKit pages, style by Anki's stable component classes (`.deck-options-pag
 - **Open windows must re-style on theme change.** macOS can switch appearance mid-session, so `on_theme_change` re-runs `restyle_window` for every open dialog in `aqt.dialogs._dialogs`.
 - **Restoring a patched Qt method:** save `QWidget.__dict__[name]`, never `getattr(QWidget, name)`. The latter returns an unbound function that, put back, stops binding and breaks every `show()`.
 - **Editor focus ring:** Anki's `.field-container` has `overflow: hidden`, which clips an outer ring, and it adds a 2px focus `outline`. Make the container visible, drop the outline, and keep `.dupe` as a red ring.
+- **Preferences saves when it closes.** Previews only open and close it. Never change a setting in a preview.
 - **Statistics charts are scaled SVGs** (viewBox 600 wide, drawn about 1.8x). CSS font sizes there are chart units, and Anki's `.graph.svelte-… .tick text` (0,3,1) outranks a plain `svg text` rule, so use `.graph .tick text` under `html.mx[data-mx="stats"]`.
 - **Browse's table paints rows with `StatusDelegate`.** A transparent `gridline-color` still leaves white grid lines, so call `setShowGrid(False)`. Never add `QTableView::item` background rules, because they would hide Anki's flag, mark and suspended colours.
 - **`--launch-only` / `--fresh` relaunch; plain runs reuse.** A plain screenshot run reuses an Anki that already has debugging on, so it will not load new Python. Use `--fresh` after Python changes.

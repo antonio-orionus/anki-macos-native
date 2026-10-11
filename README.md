@@ -17,6 +17,8 @@ An Anki add-on that makes Anki's main window look and behave like a native macOS
 
 ![Browse](docs/screenshots/browse-light.png)
 
+![Preferences](docs/screenshots/preferences-light.png)
+
 ## What it changes
 
 - **Unified toolbar.** The toolbar merges into the title bar, with the traffic lights on its centre line. Dragging empty toolbar space moves the window. Double-clicking it follows *System Settings → Desktop & Dock → Double-click a window's title bar*.
@@ -34,6 +36,7 @@ An Anki add-on that makes Anki's main window look and behave like a native macOS
 - **Browse.** Browse gets a source-list sidebar, rounded search and filter fields, and a gridless table with a quiet header and your accent as the selection. Anki's row colours for flags, marks and suspended cards are kept.
 - **Add / Edit.** The note-type and deck choosers become pop-up buttons, and **Add** is the accent button. In the note editor, toolbar groups become glass capsules, field labels are quiet, and fields are rounded with an accent focus ring.
 - **Statistics.** It looks like the other settings-style screens: a toolbar strip with segmented controls for the deck/collection and period choices, grouped panels with quiet titles, segmented controls on every chart, and quieter axes. Anki's chart colours are kept.
+- **Preferences.** It looks like System Settings: white grouped panels with section titles on the window ground, the shared field and button styles, and native tabs and check boxes.
 - **Menus.** Popup menus are macOS-style: the deck "…" menu, the reviewer's More menu and context menus get a rounded translucent panel, an inset accent highlight and system type.
 - **Theme.** It follows Anki's Light / Dark / System theme and your macOS accent colour. Text on the accent switches between white and black to stay readable.
 

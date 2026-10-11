@@ -30,7 +30,7 @@ _open: dict[str, Any] = {}
 _saved_profile: dict[str, Any] = {}
 _restyle: Callable[[Any], None] = lambda window: None
 
-DIALOGS = {"browser": "Browser", "add": "AddCards", "stats": "NewDeckStats"}
+DIALOGS = {"browser": "Browser", "add": "AddCards", "stats": "NewDeckStats", "prefs": "Preferences"}
 
 
 def enabled() -> bool:

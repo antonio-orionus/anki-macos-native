@@ -192,7 +192,7 @@ def restyle_window(window: Any) -> None:
     """Attach the Qt stylesheet for Browse or Add, by window type."""
     from aqt.theme import theme_manager
 
-    name = {"Browser": "browser", "AddCards": "add", "EditCurrent": "add", "NewDeckStats": "add"}.get(type(window).__name__)
+    name = {"Browser": "browser", "AddCards": "add", "EditCurrent": "add", "NewDeckStats": "add", "Preferences": "prefs"}.get(type(window).__name__)
     if not name or not config().get("restyle_windows", True):
         return
     accent = accent_hex() or "#0a60ff"
@@ -200,10 +200,10 @@ def restyle_window(window: Any) -> None:
     # A window's stylesheet cascades into every dialog opened from it (Choose
     # Deck, Find and Replace…), so style only the widgets this window has
     # now. Appending also beats the stylesheets Anki sets on some of them.
-    from aqt.qt import QLabel, QPushButton, QSplitter, QTableView, QToolButton, QTreeView
+    from aqt.qt import QGroupBox, QLabel, QPushButton, QSplitter, QTableView, QTabWidget, QToolButton, QTreeView
 
     window.setStyleSheet(qtstyle.window_rules(qss))
-    for kind in (QTableView, QTreeView, QToolButton, QPushButton, QLabel, QSplitter):
+    for kind in (QTableView, QTreeView, QToolButton, QPushButton, QLabel, QSplitter, QGroupBox, QTabWidget):
         for widget in window.findChildren(kind):
             if widget.window() is window:  # skip widgets inside child dialogs
                 qtstyle.append(widget, qss)
@@ -340,6 +340,9 @@ dev.set_field_styler(_fields_for)
 gui_hooks.browser_will_show.append(restyle_window)
 gui_hooks.add_cards_did_init.append(restyle_window)
 gui_hooks.stats_dialog_will_show.append(restyle_window)
+gui_hooks.dialog_manager_did_open_dialog.append(
+    lambda _manager, name, dialog: restyle_window(dialog) if name == "Preferences" else None
+)
 
 gui_hooks.webview_will_set_content.append(on_set_content)
 gui_hooks.webview_did_inject_style_into_page.append(on_page_styled)
