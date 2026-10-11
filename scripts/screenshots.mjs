@@ -3,19 +3,19 @@
 //
 //   node scripts/screenshots.mjs [--deck "Name"] [--size 999x570] [--yes] [--keep-debug]
 //
-// Quits Anki and relaunches it with web-inspector debugging, walks the deck
-// list, overview and reviewer (it reveals an answer but never grades a card),
-// captures each screen in light and dark, then relaunches Anki normally.
-// Dark captures toggle Anki's own night-mode classes in each page, so your
-// theme setting is never changed.
+// Quits Anki and relaunches it in the background with web-inspector debugging,
+// walks the deck list, overview and reviewer (it reveals an answer but never
+// grades a card), renders Deck Options in a hidden off-screen view, captures
+// each screen in light and dark, then relaunches Anki normally. Dark captures
+// toggle Anki's own night-mode classes in each page, so your theme setting is
+// never changed. Anki is never brought to the front.
 //
 // Needs: Node 22+, Xcode command-line tools (swift), and Screen Recording
-// permission for the terminal you run it from. Anki is brought to the front
-// for each capture; leave the mouse and keyboard alone while it runs. Window sizing also needs
+// permission for the terminal you run it from. Window sizing also needs
 // Accessibility permission; without it the current size is used.
 
-import { execFileSync, spawn } from "node:child_process";
-import { mkdirSync, mkdtempSync, rmSync, statSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { mkdirSync, mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { createInterface } from "node:readline/promises";
@@ -99,21 +99,15 @@ async function quitAnki() {
 }
 
 async function launchWithDebugging() {
-  spawn(join(ANKI, "Contents/MacOS/Anki"), [], {
-    env: {
-      ...process.env,
-      QTWEBENGINE_REMOTE_DEBUGGING: String(PORT),
-      // Chromium stops painting covered windows; keep frames fresh for capture.
-      QTWEBENGINE_CHROMIUM_FLAGS: [
-        process.env.QTWEBENGINE_CHROMIUM_FLAGS,
-        "--disable-backgrounding-occluded-windows",
-        "--disable-renderer-backgrounding",
-        "--disable-background-timer-throttling",
-      ].filter(Boolean).join(" "),
-    },
-    detached: true,
-    stdio: "ignore",
-  }).unref();
+  // -g: launch in the background so Anki never takes focus. Chromium stops
+  // painting covered windows, so the flags keep frames fresh for capture.
+  const flags = "--disable-backgrounding-occluded-windows --disable-renderer-backgrounding --disable-background-timer-throttling";
+  run("open", [
+    "-g", "-a", ANKI,
+    "--env", `QTWEBENGINE_REMOTE_DEBUGGING=${PORT}`,
+    "--env", "MX_DEV=1",
+    "--env", `QTWEBENGINE_CHROMIUM_FLAGS=${flags}`,
+  ]);
   const end = Date.now() + 60000;
   while (Date.now() < end) {
     try {
@@ -144,8 +138,7 @@ const scratch = mkdtempSync(join(tmpdir(), "anki-shots-"));
 
 async function capture(name) {
   windowId ??= run("swift", [join(ROOT, "scripts/lib/window-id.swift")]);
-  osa('tell application "Anki" to activate');
-  await sleep(400);
+  await sleep(250);
   // screencapture and sips report some failures only on stderr, so check files.
   const raw = join(scratch, `${name}.png`);
   try { run("screencapture", ["-x", "-l", windowId, raw], { stdio: ["ignore", "pipe", "pipe"] }); } catch { /* checked below */ }
@@ -158,6 +151,42 @@ async function capture(name) {
   if (!nonEmpty(file)) throw new Error(`could not write ${file}`);
   written.push(file);
   console.log(`  ✓ ${name}.png`);
+}
+
+async function pageScreenshot(title, file) {
+  const page = (await pages()).find((p) => p.title === title);
+  const ws = new WebSocket(page.webSocketDebuggerUrl);
+  await new Promise((resolve, reject) => { ws.onopen = resolve; ws.onerror = reject; });
+  const reply = new Promise((resolve) => { ws.onmessage = (e) => resolve(JSON.parse(e.data)); });
+  ws.send(JSON.stringify({ id: 1, method: "Page.captureScreenshot", params: { format: "png" } }));
+  const msg = await reply;
+  ws.close();
+  const raw = join(scratch, "page.png");
+  writeFileSync(raw, Buffer.from(msg.result.data, "base64"));
+  rmSync(file, { force: true });
+  run("sips", ["-Z", String(WIDTH_PX), raw, "--out", file], { stdio: ["ignore", "pipe", "pipe"] });
+  if (!nonEmpty(file)) throw new Error(`could not write ${file}`);
+}
+
+async function deckOptions(deckId) {
+  const title = "deck options";
+  await main(`pycmd(${JSON.stringify(`mx:preview:deck-options/${deckId}`)}), true`);
+  const end = Date.now() + 20000;
+  for (;;) {
+    try {
+      if (await evaluate(title, "!!document.querySelector('.deck-options-page h1') && !!document.getElementById('mx-css')")) break;
+    } catch { /* not created yet */ }
+    if (Date.now() > end) throw new Error("timed out waiting for the deck options preview");
+    await sleep(250);
+  }
+  for (const dark of [false, true]) {
+    await evaluate(title, `(() => { document.documentElement.classList.toggle("night-mode", ${dark}); document.body.classList.toggle("nightMode", ${dark}); scrollTo(0, 0); return true; })()`);
+    await sleep(400);
+    const name = `deck-options-${dark ? "dark" : "light"}`;
+    await pageScreenshot(title, join(OUT, `${name}.png`));
+    written.push(join(OUT, `${name}.png`));
+    console.log(`  ✓ ${name}.png`);
+  }
 }
 
 async function both(name, { light = true, dark = true } = {}) {
@@ -180,10 +209,9 @@ async function shoot() {
   mkdirSync(OUT, { recursive: true });
   await confirm();
 
-  console.log("Relaunching Anki with debugging…");
+  console.log("Relaunching Anki in the background with debugging…");
   await quitAnki();
   await launchWithDebugging();
-  osa('tell application "Anki" to activate');
   sizeWindow();
   await sleep(800);
 
@@ -199,6 +227,9 @@ async function shoot() {
     return row ? row.id : null;
   })()`);
   if (!deckId) throw new Error(deckName ? `no deck named "${deckName}"` : "the collection has no decks");
+
+  console.log("Deck options (hidden preview)");
+  await deckOptions(deckId);
 
   console.log("Overview");
   await main(`pycmd(${JSON.stringify(`open:${deckId}`)}), true`);
@@ -231,7 +262,7 @@ try {
   if (!flag("--keep-debug") && ankiRunning()) {
     console.log("Relaunching Anki normally…");
     await quitAnki().catch(() => {});
-    run("open", ["-a", ANKI]);
+    run("open", ["-g", "-a", ANKI]);
   }
 }
 

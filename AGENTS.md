@@ -13,7 +13,7 @@ An Anki add-on (Anki 26.x, PyQt6 / QtWebEngine, macOS) that restyles the main wi
 ## Layout
 
 - `addon/` is the add-on itself; it gets packaged.
-  - `__init__.py`: hooks, screen detection, accent and on-accent injection, settings.
+  - `__init__.py`: hooks, screen detection, accent and on-accent injection, settings. SvelteKit pages (deck options) are styled from `webview_did_inject_style_into_page` by URL path (`SVELTE_PAGES`).
   - `titlebar.py`: unified title bar (Qt `ExpandedClientAreaHint`), traffic-light centring and window drag/zoom on empty toolbar space. Uses AppKit through `ctypes` `objc_msgSend`, with no PyObjC.
   - `web/macos.css`: the entire visual design, scoped to `html.mx[data-mx="<screen>"]`.
   - `web/macos.js`: DOM enhancement (icons, groups, the overview restructure, the answer-capsule morph, the whole-row deck click).
@@ -22,7 +22,9 @@ An Anki add-on (Anki 26.x, PyQt6 / QtWebEngine, macOS) that restyles the main wi
 - `scripts/screenshots.mjs` regenerates `docs/screenshots/` in light and dark (see "Updating the README screenshots").
 - `DESIGN.md`, `PRODUCT.md` and `.impeccable/` hold the design system and product record.
 
-Screens are named by `data-mx`: `toolbar`, `deckbrowser`, `deckbrowser-bottom`, `overview`, `overview-bottom`, `reviewer`, `reviewer-bottom`, `bottom`.
+Screens are named by `data-mx`: `toolbar`, `deckbrowser`, `deckbrowser-bottom`, `overview`, `overview-bottom`, `reviewer`, `reviewer-bottom`, `bottom`, `deck-options`.
+
+On SvelteKit pages, style by Anki's stable component classes (`.deck-options-page`, `.spin-box`, `.select-container`, `.form-switch`, `.sticky-container`, `.container.light|.dark`), never by the generated `svelte-xxxx` hashes, which change with every Anki release. The `.item` and `svelte-css-wrapper` elements are `display: contents`, so they draw nothing; put borders and padding on the `.row` inside.
 
 ## Dev loop
 
@@ -35,7 +37,15 @@ Screens are named by `data-mx`: `toolbar`, `deckbrowser`, `deckbrowser-bottom`, 
 4. List the webviews with `http://127.0.0.1:9229/json`. They are titled `top toolbar`, `main webview` and `bottom toolbar`. Drive them with CDP `Runtime.evaluate` (Node 22+ has a global `WebSocket`).
    - Navigate with `pycmd('decks')`, `pycmd('open:<deckId>')`, `pycmd('study')` and `pycmd('ans')`.
    - **Never send `ease1`–`ease4`.** Grading changes the user's scheduling.
-5. `MX_DEV=1` enables `pycmd('mx:shot:<path>')`, which saves `mw.grab()` (no title bar). For real window captures, use `screencapture -l <windowID>` (`scripts/lib/window-id.swift`). Never pass `-o`: it fails on this machine.
+5. `MX_DEV=1` enables two dev commands:
+   - `pycmd('mx:shot:<path>')` saves `mw.grab()` (no title bar).
+   - `pycmd('mx:preview:deck-options/<deckId>')` renders that page in a hidden, off-screen view (titled `deck options` on the CDP list), so you can inspect and screenshot it without a window popping over the user's work. Hot-reload CSS there by bumping the `?v=` on `#mx-css`. It shows the user's real settings: never press Save in it.
+
+   Launch in the background so Anki never takes focus:
+   ```bash
+   open -g -a Anki --env MX_DEV=1 --env QTWEBENGINE_REMOTE_DEBUGGING=9229 \
+     --env "QTWEBENGINE_CHROMIUM_FLAGS=--disable-backgrounding-occluded-windows --disable-renderer-backgrounding"
+   ``` For real window captures, use `screencapture -l <windowID>` (`scripts/lib/window-id.swift`). Never pass `-o`: it fails on this machine.
 6. When done, relaunch Anki normally so the debug port isn't left open.
 
 ## Verifying
@@ -59,14 +69,14 @@ Screens are named by `data-mx`: `toolbar`, `deckbrowser`, `deckbrowser-bottom`, 
 
 ## Not covered yet
 
-The Browse window, the Add/Edit editor, deck options and stats keep Anki's look. Since Anki 26.08 the editor is a SvelteKit page, so style it via `gui_hooks.webview_did_inject_style_into_page` plus a URL check, not `isinstance(context, Editor)`. Qt widgets should get QSS through the `gui_hooks.style_did_init` filter, never `app.setStyleSheet` directly.
+The Browse window, the Add/Edit editor and stats keep Anki's look. Since Anki 26.08 the editor is a SvelteKit page: add its path to `SVELTE_PAGES`, the same way deck options works. Do not use `isinstance(context, Editor)`. Qt widgets should get QSS through the `gui_hooks.style_did_init` filter, never `app.setStyleSheet` directly.
 
 ## Updating the README screenshots
 
 `scripts/screenshots.mjs` regenerates every image in `docs/screenshots/` from your running Anki:
 
-1. It quits Anki and relaunches it with web-inspector debugging.
-2. It walks the deck list, overview, question and answer screens. It reveals an answer but never grades a card.
+1. It quits Anki and relaunches it **in the background** (`open -g`) with web-inspector debugging. Anki never takes focus.
+2. It walks the deck list, overview, question and answer screens. It reveals an answer but never grades a card. Deck Options is rendered in the hidden preview.
 3. It captures each screen in light and dark. Dark is simulated in the page, so your theme setting is untouched.
 4. It relaunches Anki normally.
 
@@ -83,7 +93,7 @@ node scripts/screenshots.mjs --deck "My Deck" --size 999x570
 | `--yes` | skip the "this quits Anki" confirmation |
 | `--keep-debug` | leave Anki running with debugging on |
 
-It needs Node 22+, the Xcode command-line tools, and **Screen Recording** permission for your terminal. Resizing the window also needs **Accessibility** permission. Anki is brought to the front for each shot, so leave the mouse alone for the ~20 seconds it takes. Use a profile whose decks you're happy to show publicly.
+It needs Node 22+, the Xcode command-line tools, and **Screen Recording** permission for your terminal. Resizing the window also needs **Accessibility** permission. Use a profile whose decks you're happy to show publicly.
 
 ## Releasing
 
