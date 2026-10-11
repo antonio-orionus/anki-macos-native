@@ -139,7 +139,7 @@ html.mx .mx-group {
 html.mx .mx-group {
   display: inline-flex;
   align-items: center;
-  gap: 0;
+  gap: 2px; /* two filled buttons never fuse into one shape */
   padding: 3px;
 }
 
@@ -167,7 +167,8 @@ html.mx .mx-btn {
   cursor: default;
   transition: background-color 120ms ease, transform 120ms ease;
 }
-html.mx .mx-btn:hover { background: var(--mx-fill) !important; }
+/* macOS toolbar and bar buttons give feedback on press, not on hover; the
+   icon darkens slightly so the pointer still has a target. */
 html.mx .mx-btn:active { background: var(--mx-fill-strong) !important; transform: scale(0.97); }
 html.mx .mx-btn .mx-icon { color: var(--mx-label-2); }
 html.mx .mx-btn:hover .mx-icon { color: var(--mx-label); }
@@ -184,8 +185,8 @@ html.mx .mx-group > .mx-btn + .mx-btn::before {
   background: var(--mx-separator);
   transition: opacity 120ms ease;
 }
-html.mx .mx-group > .mx-btn:hover::before,
-html.mx .mx-group > .mx-btn:hover + .mx-btn::before { opacity: 0; }
+html.mx .mx-group > .mx-btn:active::before,
+html.mx .mx-group > .mx-btn:active + .mx-btn::before { opacity: 0; }
 
 /* Icon-only round glass button. */
 html.mx .mx-round {
@@ -326,7 +327,7 @@ html.mx[data-mx="toolbar"] .hitem {
   cursor: default;
   transition: background-color 120ms ease, transform 120ms ease;
 }
-html.mx[data-mx="toolbar"] .hitem:hover { background: var(--mx-fill) !important; }
+html.mx[data-mx="toolbar"] .hitem:hover .mx-icon { color: var(--mx-label); }
 html.mx[data-mx="toolbar"] .hitem:active { background: var(--mx-fill-strong) !important; transform: scale(0.97); }
 html.mx[data-mx="toolbar"] .hitem .mx-icon { color: var(--mx-label-2); }
 html.mx[data-mx="toolbar"] .hitem.mx-current { background: var(--mx-fill-strong) !important; }
@@ -341,7 +342,7 @@ html.mx[data-mx="toolbar"] .toolbar > .hitem {
     inset 0 0 0 0.5px var(--mx-glass-edge),
     var(--mx-glass-shadow);
 }
-html.mx[data-mx="toolbar"] .toolbar > .hitem:hover { background: var(--mx-glass-hover) !important; }
+html.mx[data-mx="toolbar"] .toolbar > .hitem:active { background: var(--mx-glass-press) !important; }
 
 /* Sync: Anki's spinner image gives way to our icon, which spins instead. */
 html.mx[data-mx="toolbar"] #sync-spinner { display: none !important; }

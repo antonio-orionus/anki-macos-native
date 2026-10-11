@@ -308,7 +308,7 @@ Icons are Lucide outlines on a 24px grid, drawn at 16px (17px in round buttons, 
 ## Components
 
 ### Buttons
-- **Capsule button:** transparent, 28px tall, 12px side padding, icon plus label 6px apart. Hover takes the fill; press takes fill strong and scales to 0.97 over 120ms. Inside a glass group, neighbours are split by a 0.5px hairline that hides beside the hovered button.
+- **Capsule button:** transparent, 28px tall, 12px side padding, icon plus label 6px apart. As in native macOS toolbars, there's no hover fill; hover only darkens the icon from secondary to primary label. Press takes fill strong and scales to 0.97 over 120ms. Inside a glass group, buttons sit 2px apart so two fills never fuse, and neighbours are split by a 0.5px hairline that hides beside the pressed button.
 - **Current item:** a toolbar button for the current screen keeps fill strong and colours its icon with the accent.
 - **Round glass button:** 34px circle of glass with the glass rim and shadow, icon only (label kept in the tooltip and aria-label); hover brightens to glass hover, press to glass press.
 - **Stand-alone toolbar links** (other add-ons, Sync): carry their own glass at 34px tall.
