@@ -342,6 +342,7 @@ async function qtWindows() {
 }
 
 async function both(name, { light = true, dark = true } = {}) {
+  await sleep(900); // let the window repaint after navigation before capturing
   if (light) { await setDark(false); await capture(`${name}-light`); }
   if (dark) { await setDark(true); await capture(`${name}-dark`); }
   await setDark(false);
