@@ -337,6 +337,18 @@ Icons are Lucide outlines on a 24px grid, drawn at 16px (17px in round buttons, 
 - **Slider:** 4px fill-strong track, 18px white knob with a soft shadow.
 - **Notices:** 8px corners, no border, the state colour at 10 to 12% behind primary-label text, 12px type.
 
+### Note Editor
+- **Toolbar:** a ground strip with a hairline under it. Each button group is a glass capsule (8px corners, 2px padding) of flat 24px buttons with 5px corners, 500 12px. Hover takes the fill, and active or pressed takes fill strong.
+- **Fields:** labels are 600 12px in the secondary label. The field box is the field surface with 8px corners and a 0.5px edge ring, and focus takes the accent ring. Only the box is styled; the text inside belongs to the note.
+- **Tags:** the same field box, at least 30px tall.
+
+### Browse and Add Windows (Qt)
+- **Sidebar:** the sidebar ground (#ececee / #252527), 13px items with 6px rounded hover and selection pills (fill / fill strong).
+- **Table:** the group surface, a subtle alternate row, no grid, and an accent selection with on-accent text. The header is 500 12px secondary with hairline separators. Anki's row colours (flags, marked, suspended) are untouched.
+- **Fields:** the search box and filters are 8px-corner field surfaces with a 1px edge, plus a 2px accent border on focus.
+- **Buttons:** 8px-corner field surfaces with a 1px edge. **Add** is the accent fill with on-accent 600 text.
+- **Scroll bars:** thin overlay-style handles (fill strong, 3px corners), since a stylesheet replaces the native ones.
+
 ### Menus (Qt popups)
 - **Panel:** 12px corners, translucent window so macOS draws a rounded shadow, 1px edge (black 12% / white 12%), 5px padding. Light ground rgba(246,246,248,0.94), dark rgba(42,42,44,0.94).
 - **Items:** 13px system type, 4px by 12px padding (24px on the right), 5px corners. The selected item is filled with the accent and set in the on-accent colour. Disabled items use the tertiary label.

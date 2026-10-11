@@ -1184,6 +1184,73 @@ html.mx[data-mx="deck-options"] .modal-content {
   box-shadow: var(--mx-glass-shadow-lift) !important;
 }
 
+/* ================================================================= editor */
+/* The note editor in Add, Edit and Browse. The text you type lives in a
+   shadow root; only the box around it is styled, never its content. */
+
+html.mx[data-mx="editor"] {
+  --mx-field: #ffffff;
+  --mx-field-edge: rgb(0 0 0 / 0.16);
+}
+html.mx.night-mode[data-mx="editor"] {
+  --mx-field: rgb(255 255 255 / 0.07);
+  --mx-field-edge: rgb(255 255 255 / 0.12);
+}
+
+/* Toolbar: each button group is a glass capsule of flat buttons. */
+html.mx[data-mx="editor"] .editor-toolbar {
+  background: var(--mx-ground) !important;
+  border: none !important;
+  box-shadow: inset 0 -0.5px 0 var(--mx-separator);
+  padding: 8px 10px !important;
+}
+html.mx[data-mx="editor"] .editor-toolbar .button-toolbar { gap: 6px; row-gap: 6px; }
+html.mx[data-mx="editor"] .editor-toolbar .button-group {
+  padding: 2px;
+  border-radius: var(--mx-radius-sm);
+  background: var(--mx-glass);
+  box-shadow: inset 0 0.5px 0 var(--mx-glass-spec), inset 0 0 0 0.5px var(--mx-glass-edge), var(--mx-glass-shadow);
+}
+html.mx[data-mx="editor"] .editor-toolbar :is(button.label-button, button.icon-button) {
+  height: 24px;
+  min-width: 26px;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 5px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--mx-label) !important;
+  font: 500 12px/24px var(--mx-font) !important;
+}
+html.mx[data-mx="editor"] .editor-toolbar button.label-button { padding: 0 10px !important; }
+html.mx[data-mx="editor"] .editor-toolbar :is(button.label-button, button.icon-button):hover { background: var(--mx-fill) !important; }
+html.mx[data-mx="editor"] .editor-toolbar :is(button.label-button, button.icon-button):is(:active, .active) {
+  background: var(--mx-fill-strong) !important;
+}
+html.mx[data-mx="editor"] .editor-toolbar button.icon-button svg { color: var(--mx-label); fill: currentColor; }
+
+/* Fields. */
+html.mx[data-mx="editor"] .fields { gap: 4px; padding: 6px 10px 10px; }
+html.mx[data-mx="editor"] .label-container { padding: 6px 2px 4px !important; background: transparent !important; }
+html.mx[data-mx="editor"] .label-name {
+  color: var(--mx-label-2) !important;
+  font: 600 12px/1.2 var(--mx-font) !important;
+}
+html.mx[data-mx="editor"] .collapse-badge,
+html.mx[data-mx="editor"] .field-state .badge { color: var(--mx-label-3) !important; }
+html.mx[data-mx="editor"] .editor-field,
+html.mx[data-mx="editor"] .tag-editor {
+  border: none !important;
+  border-radius: var(--mx-radius-sm) !important;
+  background: var(--mx-field) !important;
+  box-shadow: inset 0 0 0 0.5px var(--mx-field-edge), 0 0.5px 1px rgb(0 0 0 / 0.05) !important;
+}
+html.mx[data-mx="editor"] .editor-field:focus-within,
+html.mx[data-mx="editor"] .tag-editor:focus-within {
+  box-shadow: 0 0 0 3.5px color-mix(in srgb, var(--mx-accent) 45%, transparent) !important;
+}
+html.mx[data-mx="editor"] .tag-editor { min-height: 30px; padding: 2px 6px !important; }
+
 /* ================================================================= motion */
 
 html.mx body:not(.reduce-motion) .mx-enter {

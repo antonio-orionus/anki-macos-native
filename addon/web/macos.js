@@ -7,8 +7,18 @@
   if (window.mxLoaded) return;
   window.mxLoaded = true;
 
-  const boot = window.mxBoot || {};
-  const screen = boot.screen || document.documentElement.dataset.mx;
+  // Boot data comes from an inline <head> script. Pages whose Content Security
+  // Policy blocks inline scripts (the legacy editor) get it from this
+  // script's own URL instead.
+  const params = new URL(document.currentScript ? document.currentScript.src : location.href).searchParams;
+  const boot = window.mxBoot || {
+    screen: params.get("screen") || (document.querySelector('script[src*="js/editor.js"]') ? "editor" : ""),
+    classes: (params.get("classes") || "mx").split(",").filter(Boolean),
+  };
+  const screen = boot.screen || document.documentElement.dataset.mx || "";
+  for (const [name, value] of [["--mx-accent", params.get("accent")], ["--mx-on-accent", params.get("onAccent")]]) {
+    if (value) document.documentElement.style.setProperty(name, value);
+  }
   const reduceMotion = () =>
     document.body.classList.contains("reduce-motion") ||
     matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -331,7 +341,22 @@
   }
 
 
+  /* Some pages (the legacy editor) rewrite <html>'s class and data
+     attributes after load; keep this add-on's markers on it. */
+  function keepRootMarkers() {
+    const root = document.documentElement;
+    const classes = boot.classes || [];
+    const apply = () => {
+      if (screen && root.dataset.mx !== screen) root.dataset.mx = screen;
+      const missing = classes.filter((c) => !root.classList.contains(c));
+      if (missing.length) root.classList.add(...missing);
+    };
+    apply();
+    new MutationObserver(apply).observe(root, { attributes: true, attributeFilter: ["class", "data-mx"] });
+  }
+
   function start() {
+    keepRootMarkers();
     run();
     let queued = false;
     new MutationObserver(() => {

@@ -287,6 +287,60 @@ async function menus() {
   }
 }
 
+// MX_DEV: evaluate a Python expression inside Anki (see addon/dev.py).
+async function pyeval(expression) {
+  const out = join(scratch, `eval-${Date.now()}.txt`);
+  await main(`pycmd(${JSON.stringify(`mx:pyeval:${out}|${expression}`)}), true`);
+  for (let i = 0; i < 50 && !nonEmpty(out); i++) await sleep(100);
+  return nonEmpty(out) ? readFileSync(out, "utf8") : null;
+}
+
+async function editorPages(dark) {
+  for (const page of (await pages()).filter((p) => p.title === "editor")) {
+    const ws = new WebSocket(page.webSocketDebuggerUrl);
+    await new Promise((r) => (ws.onopen = r));
+    const done = new Promise((r) => (ws.onmessage = r));
+    ws.send(JSON.stringify({ id: 1, method: "Runtime.evaluate", params: { expression:
+      `document.documentElement.classList.toggle("night-mode", ${dark}); document.body.classList.toggle("nightMode", ${dark}); 1` } }));
+    await done;
+    ws.close();
+  }
+}
+
+async function grabWindow(name, file) {
+  const raw = join(scratch, `${name}.png`);
+  rmSync(raw, { force: true });
+  await main(`pycmd(${JSON.stringify(`mx:grab:${name}:${raw}`)}), true`);
+  for (let i = 0; i < 50 && !nonEmpty(raw); i++) await sleep(100);
+  if (!nonEmpty(raw)) throw new Error(`could not capture the ${name} window`);
+  rmSync(file, { force: true });
+  run("sips", ["-Z", String(WIDTH_PX), raw, "--out", file], { stdio: ["ignore", "pipe", "pipe"] });
+  written.push(file);
+  console.log(`  ✓ ${file.split("/").pop()}`);
+}
+
+// Browse and Add open off-screen (addon/dev.py), are captured, and closed;
+// dev.py restores the window geometry Anki saves on close.
+async function qtWindows() {
+  await main("pycmd('mx:open:browser'), pycmd('mx:open:add'), true");
+  for (let i = 0; i < 60 && (await pages()).filter((p) => p.title === "editor").length < 2; i++) await sleep(150);
+  await sleep(1500);
+  try {
+    await editorPages(false);
+    await grabWindow("browser", join(OUT, "browse-light.png"));
+    await grabWindow("add", join(OUT, "add-light.png"));
+    // Dark for Add only: simulated dark keeps Browse's light-theme icons.
+    await pyeval('(lambda q, qt: windows["add"].setStyleSheet(q.render("add", True, "#0a60ff", "#ffffff")))(__import__("anki_macos_native.qtstyle", fromlist=["x"]), None)');
+    await editorPages(true);
+    await sleep(500);
+    await grabWindow("add", join(OUT, "add-dark.png"));
+  } finally {
+    await main("pycmd('mx:close:browser'), pycmd('mx:close:add'), true");
+    await sleep(2500); // dev.py restores saved geometry again after 2 s
+
+  }
+}
+
 async function both(name, { light = true, dark = true } = {}) {
   if (light) { await setDark(false); await capture(`${name}-light`); }
   if (dark) { await setDark(true); await capture(`${name}-dark`); }
@@ -307,7 +361,8 @@ async function shoot() {
   mkdirSync(OUT, { recursive: true });
   await confirm();
 
-  if (await debuggableAnkiRunning()) {
+  // --launch-only exists to load new add-on code, so it always relaunches.
+  if (!flag("--launch-only") && !flag("--fresh") && (await debuggableAnkiRunning())) {
     reused = true;
     console.log("Using the Anki already running with debugging (no relaunch).");
   } else {
@@ -317,6 +372,10 @@ async function shoot() {
   }
   sizeWindow();
   await sleep(800);
+  if (flag("--launch-only")) {
+    console.log("Anki is running with debugging (MX_DEV) — stopping here (--launch-only).");
+    return;
+  }
 
   console.log("Deck list");
   await toolbar("pycmd('decks'), true");
@@ -343,6 +402,13 @@ async function shoot() {
     await menus();
   } catch (err) {
     console.warn(`! skipped menus: ${err.message} (the running Anki needs MX_DEV=1)`);
+  }
+
+  console.log("Browse and Add (off-screen)");
+  try {
+    await qtWindows();
+  } catch (err) {
+    console.warn(`! skipped Browse/Add: ${err.message} (the running Anki needs MX_DEV=1)`);
   }
 
   console.log("Overview");
@@ -374,7 +440,7 @@ try {
   console.error(`✗ ${err.message}`);
 } finally {
   try { await toolbar("pycmd('decks'), true"); } catch { /* Anki may be gone */ }
-  if (!reused && !flag("--keep-debug") && ankiRunning()) {
+  if ((!reused || flag("--restore")) && !flag("--keep-debug") && !flag("--launch-only") && ankiRunning()) {
     console.log("Relaunching Anki normally…");
     await quitAnki().catch(() => {});
     await guardFocus(async () => {

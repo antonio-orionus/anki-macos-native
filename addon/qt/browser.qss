@@ -1,0 +1,77 @@
+/* Browse window. Tokens (@name@) are filled by qtstyle.py per theme. */
+
+QMainWindow, QMainWindow > QWidget { background: @ground@; }
+
+/* Sidebar: a source list with rounded selection pills. */
+QTreeView {
+    background: @sidebar@;
+    border: none;
+    outline: 0;
+    padding: 4px 6px;
+    font-size: 13px;
+    color: @label@;
+}
+QTreeView::item { padding: 3px 4px; border-radius: 6px; }
+QTreeView::item:hover { background: @fill@; }
+QTreeView::item:selected { background: @fill_strong@; color: @label@; }
+QTreeView::branch { background: transparent; }
+
+/* Card/note table: no grid, quiet header, accent selection. Row colours
+   for flags, marks and suspension still come from Anki. */
+QTableView {
+    background: @group@;
+    alternate-background-color: @row_alt@;
+    border: none;
+    gridline-color: transparent;
+    selection-background-color: @accent@;
+    selection-color: @on_accent@;
+    outline: 0;
+    font-size: 13px;
+    color: @label@;
+}
+QHeaderView { background: @group@; border: none; }
+QHeaderView::section {
+    background: @group@;
+    color: @label2@;
+    border: none;
+    border-bottom: 1px solid @separator@;
+    border-right: 1px solid @separator@;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Search field and sidebar filter. */
+QComboBox, QLineEdit {
+    background: @field@;
+    border: 1px solid @field_edge@;
+    border-radius: 8px;
+    padding: 3px 10px;
+    min-height: 20px;
+    font-size: 13px;
+    color: @label@;
+}
+QComboBox:focus, QLineEdit:focus { border: 2px solid @accent@; padding: 2px 9px; }
+QComboBox::drop-down { border: none; width: 22px; }
+
+QToolButton {
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    padding: 3px;
+}
+QToolButton:hover { background: @fill@; }
+QToolButton:checked, QToolButton:pressed { background: @fill_strong@; }
+
+QSplitter::handle { background: @separator@; }
+QSplitter::handle:horizontal { width: 1px; }
+QSplitter::handle:vertical { height: 1px; }
+
+/* A stylesheet on a scroll area replaces native scroll bars; keep them thin
+   and overlay-like. */
+QScrollBar:vertical { background: transparent; width: 10px; margin: 2px; }
+QScrollBar:horizontal { background: transparent; height: 10px; margin: 2px; }
+QScrollBar::handle { background: @fill_strong@; border-radius: 3px; min-height: 28px; min-width: 28px; }
+QScrollBar::handle:hover { background: @label3@; }
+QScrollBar::add-line, QScrollBar::sub-line { width: 0; height: 0; border: none; background: none; }
+QScrollBar::add-page, QScrollBar::sub-page { background: none; }

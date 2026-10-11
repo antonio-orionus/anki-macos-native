@@ -1,0 +1,36 @@
+/* Add / Edit window. Tokens (@name@) are filled by qtstyle.py per theme. */
+
+QDialog, QMainWindow { background: @ground@; }
+
+QLabel { color: @label2@; font-size: 12px; font-weight: 600; }
+
+/* Note type / deck choosers and the bottom buttons. */
+QPushButton {
+    background: @field@;
+    border: 1px solid @field_edge@;
+    border-radius: 8px;
+    padding: 5px 16px;
+    min-height: 18px;
+    font-size: 13px;
+    color: @label@;
+}
+QPushButton:hover { background: @hover@; }
+QPushButton:pressed { background: @fill_strong@; }
+QPushButton:disabled { color: @label3@; }
+QPushButton:default {
+    background: @accent@;
+    border: none;
+    color: @on_accent@;
+    font-weight: 600;
+    padding: 6px 18px;
+}
+
+/* Anki's Add button is not Qt's default button; the add-on marks it. */
+QPushButton[mxPrimary="true"] {
+    background: @accent@;
+    border: none;
+    color: @on_accent@;
+    font-weight: 600;
+    padding: 6px 18px;
+}
+QPushButton[mxPrimary="true"]:hover { background: @accent@; }

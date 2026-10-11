@@ -12,6 +12,9 @@ An Anki add-on that makes Anki's main window look and behave like a native macOS
 | **Answer** | ![Answer, light](docs/screenshots/answer-light.png) | ![Answer, dark](docs/screenshots/answer-dark.png) |
 | **Deck Options** | ![Deck Options, light](docs/screenshots/deck-options-light.png) | ![Deck Options, dark](docs/screenshots/deck-options-dark.png) |
 | **Menu** | ![Menu, light](docs/screenshots/menu-light.png) | ![Menu, dark](docs/screenshots/menu-dark.png) |
+| **Add** | ![Add, light](docs/screenshots/add-light.png) | ![Add, dark](docs/screenshots/add-dark.png) |
+
+![Browse](docs/screenshots/browse-light.png)
 
 ## What it changes
 
@@ -27,6 +30,8 @@ An Anki add-on that makes Anki's main window look and behave like a native macOS
   - segmented controls for Preset / This deck / Today only
   - native-looking fields, pop-ups, switches and sliders
   - a toolbar strip with the preset menu and an accent **Save** button
+- **Browse.** Browse gets a source-list sidebar, rounded search and filter fields, and a gridless table with a quiet header and your accent as the selection. Anki's row colours for flags, marks and suspended cards are kept.
+- **Add / Edit.** The note-type and deck choosers become pop-up buttons, and **Add** is the accent button. In the note editor, toolbar groups become glass capsules, field labels are quiet, and fields are rounded with an accent focus ring.
 - **Menus.** Popup menus are macOS-style: the deck "…" menu, the reviewer's More menu and context menus get a rounded translucent panel, an inset accent highlight and system type.
 - **Theme.** It follows Anki's Light / Dark / System theme and your macOS accent colour. Text on the accent switches between white and black to stay readable.
 
@@ -56,10 +61,11 @@ Go to **Tools → Add-ons → macOS Native → Config**.
 | `restyle_cards` | `true` | Set card text in the system font on the window background. Use `false` to show your note types' own styling unchanged. |
 | `accent` | `"system"` | Follow the macOS accent colour, or set a hex colour such as `"#ff2d55"`. |
 | `restyle_menus` | `true` | macOS-style popup menus. Restart Anki after changing it. |
+| `restyle_windows` | `true` | macOS styling for the Browse and Add / Edit windows. Restart Anki after changing it. |
 
 ## Not covered yet
 
-The Browse window, the Add / Edit editor and statistics are separate pages or Qt dialogs, and they keep Anki's own look.
+The Statistics window keeps Anki's own look.
 
 ## Credits
 

@@ -9,18 +9,20 @@ from __future__ import annotations
 
 import json
 import os
+from urllib.parse import urlencode
 import sys
 from typing import Any
 
 from aqt import gui_hooks, mw
 from aqt.deckbrowser import DeckBrowser, DeckBrowserBottomBar
+from aqt.editor import Editor
 from aqt.overview import Overview, OverviewBottomBar
 from aqt.qt import QApplication, QPalette
 from aqt.reviewer import Reviewer, ReviewerBottomBar
 from aqt.toolbar import BottomToolbar, TopToolbar
 from aqt.webview import AnkiWebView, WebContent
 
-from . import menus, quiet, titlebar
+from . import dev, menus, qtstyle, quiet, titlebar
 
 ADDON = __name__.split(".")[-1]
 IS_MAC = sys.platform == "darwin"
@@ -39,6 +41,7 @@ SCREENS: list[tuple[type, str]] = [
     (Reviewer, "reviewer"),
     (TopToolbar, "toolbar"),
     (BottomToolbar, "bottom"),
+    (Editor, "editor"),
 ]
 
 
@@ -96,7 +99,6 @@ def on_set_content(web_content: WebContent, context: object | None) -> None:
     cfg = config()
     base = f"/_addons/{ADDON}/web"
     web_content.css.append(f"{base}/macos.css")
-    web_content.js.append(f"{base}/macos.js")
 
     classes = ["mx"]
     if unified_titlebar_enabled():
@@ -106,6 +108,12 @@ def on_set_content(web_content: WebContent, context: object | None) -> None:
     state = {"screen": screen, "classes": classes, "state": mw.state, "decksTitle": decks_title()}
     accent = accent_hex()
     style = accent_vars(accent) if accent else ""
+    # Screen and accent also ride on the script URL for pages whose Content
+    # Security Policy blocks the inline boot script below.
+    query = {"screen": screen, "classes": ",".join(classes)}
+    if accent:
+        query.update(accent=accent, onAccent=on_accent(accent))
+    web_content.js.append(f"{base}/macos.js?{urlencode(query)}")
     web_content.head += (
         f"<style id='mx-vars'>{style}</style>"
         f"<script>window.mxBoot={json.dumps(state)};"
@@ -120,6 +128,7 @@ def on_set_content(web_content: WebContent, context: object | None) -> None:
 # matched by URL path once Anki has injected its own styles.
 SVELTE_PAGES: dict[str, str] = {
     "/deck-options": "deck-options",
+    "/editor": "editor",
 }
 
 
@@ -178,6 +187,31 @@ def dev_preview(path: str) -> None:
     _previews.append(view)
 
 
+def restyle_window(window: Any) -> None:
+    """Attach the Qt stylesheet for Browse or Add, by window type."""
+    from aqt.theme import theme_manager
+
+    name = {"Browser": "browser", "AddCards": "add", "EditCurrent": "add"}.get(type(window).__name__)
+    if not name or not config().get("restyle_windows", True):
+        return
+    accent = accent_hex() or "#0a60ff"
+    qss = qtstyle.render(name, theme_manager.night_mode, accent, on_accent(accent))
+    window.setStyleSheet(qss)
+    # Anki gives some widgets their own stylesheet, which outranks the
+    # window's; append ours to theirs so ours wins where they conflict.
+    from aqt.qt import QPushButton, QTableView, QTreeView
+
+    for widget in window.findChildren(QTableView) + window.findChildren(QTreeView):
+        qtstyle.append(widget, qss)
+    for table in window.findChildren(QTableView):
+        table.setShowGrid(False)  # Anki's row painter ignores a transparent grid colour
+    add_button = getattr(window, "addButton", None)
+    if isinstance(add_button, QPushButton):
+        add_button.setProperty("mxPrimary", True)
+        add_button.style().unpolish(add_button)
+        add_button.style().polish(add_button)
+
+
 def menu_qss() -> str:
     from aqt.theme import theme_manager
 
@@ -224,6 +258,8 @@ def on_js_message(handled: tuple[bool, Any], message: str, context: Any):
     if not message.startswith("mx:"):
         return handled
     kind, _, payload = message[3:].partition(":")
+    if dev.handle(kind, payload):
+        return (True, None)
     if kind == "rects":
         titlebar.set_control_rects(json.loads(payload or "[]"))
     elif kind == "shot" and os.environ.get("MX_DEV"):
@@ -269,6 +305,10 @@ if config().get("restyle_menus", True):
     menus.install(menu_qss)
 
 quiet.install(mw)  # MX_QUIET only: dev relaunches never take focus
+
+dev.set_restyler(restyle_window)
+gui_hooks.browser_will_show.append(restyle_window)
+gui_hooks.add_cards_did_init.append(restyle_window)
 
 gui_hooks.webview_will_set_content.append(on_set_content)
 gui_hooks.webview_did_inject_style_into_page.append(on_page_styled)

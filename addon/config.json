@@ -2,5 +2,6 @@
   "unified_titlebar": true,
   "restyle_cards": true,
   "accent": "system",
-  "restyle_menus": true
+  "restyle_menus": true,
+  "restyle_windows": true
 }
