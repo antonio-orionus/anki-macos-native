@@ -52,46 +52,6 @@ Go to **Tools → Add-ons → macOS Native → Config**.
 
 The Browse window, the Add / Edit editor, deck options and statistics are separate pages or Qt dialogs, and they keep Anki's own look.
 
-## How it works
-
-- `addon/__init__.py` uses `gui_hooks.webview_will_set_content` to inject one stylesheet and one script into the main window's webviews: toolbar, deck list, overview, reviewer and bottom bars. It restyles Anki's own markup in place rather than replacing it, which keeps compatibility with Anki and other add-ons.
-- `addon/titlebar.py` sets Qt's `ExpandedClientAreaHint` and `NoTitleBarBackgroundHint`. It hides the window title and re-centres the traffic lights through the Objective-C runtime (`ctypes`, no PyObjC). It also turns presses on empty toolbar space into native window drags.
-- The design system (tokens, components, rules) is documented in [DESIGN.md](DESIGN.md).
-
-## Development
-
-```bash
-./scripts/dev-link.sh             # link addon/ into Anki's add-ons folder
-./scripts/build.sh                # build dist/anki-macos-native-<version>.ankiaddon
-node scripts/screenshots.mjs      # regenerate docs/screenshots/ (light + dark)
-```
-
-### Updating the screenshots
-
-`scripts/screenshots.mjs` regenerates every image in `docs/screenshots/` from your running Anki:
-
-1. It quits Anki and relaunches it with web-inspector debugging.
-2. It walks the deck list, overview, question and answer screens. It reveals an answer but never grades a card.
-3. It captures each screen in light and dark. Dark is simulated in the page, so your theme setting is untouched.
-4. It relaunches Anki normally.
-
-Review the result with `git diff --stat docs/`.
-
-```bash
-node scripts/screenshots.mjs --deck "My Deck" --size 999x570
-```
-
-| option | effect |
-|---|---|
-| `--deck "Name"` | deck to open (default: the first one) |
-| `--size WxH` | window size in points (default `999x570`) |
-| `--yes` | skip the "this quits Anki" confirmation |
-| `--keep-debug` | leave Anki running with debugging on |
-
-It needs Node 22+, the Xcode command-line tools, and **Screen Recording** permission for your terminal. Resizing the window also needs **Accessibility** permission. Anki is brought to the front for each shot, so leave the mouse alone for the ~20 seconds it takes. Use a profile whose decks you're happy to show publicly.
-
-After changing Python, restart Anki. Launch it with `QTWEBENGINE_REMOTE_DEBUGGING=9229` to inspect the webviews from Chrome at `chrome://inspect`.
-
 ## Credits
 
 Icons are from [Lucide](https://lucide.dev) (ISC licence). The add-on itself is [MIT](LICENSE).

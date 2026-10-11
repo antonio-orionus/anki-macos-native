@@ -19,7 +19,7 @@ An Anki add-on (Anki 26.x, PyQt6 / QtWebEngine, macOS) that restyles the main wi
   - `web/macos.js`: DOM enhancement (icons, groups, the overview restructure, the answer-capsule morph, the whole-row deck click).
 - `scripts/build.sh` builds `dist/anki-macos-native-<version>.ankiaddon`.
 - `scripts/dev-link.sh` symlinks `addon/` into `~/Library/Application Support/Anki2/addons21/anki_macos_native`.
-- `scripts/screenshots.mjs` regenerates `docs/screenshots/` in light and dark (see README).
+- `scripts/screenshots.mjs` regenerates `docs/screenshots/` in light and dark (see "Updating the README screenshots").
 - `DESIGN.md`, `PRODUCT.md` and `.impeccable/` hold the design system and product record.
 
 Screens are named by `data-mx`: `toolbar`, `deckbrowser`, `deckbrowser-bottom`, `overview`, `overview-bottom`, `reviewer`, `reviewer-bottom`, `bottom`.
@@ -60,6 +60,30 @@ Screens are named by `data-mx`: `toolbar`, `deckbrowser`, `deckbrowser-bottom`, 
 ## Not covered yet
 
 The Browse window, the Add/Edit editor, deck options and stats keep Anki's look. Since Anki 26.08 the editor is a SvelteKit page, so style it via `gui_hooks.webview_did_inject_style_into_page` plus a URL check, not `isinstance(context, Editor)`. Qt widgets should get QSS through the `gui_hooks.style_did_init` filter, never `app.setStyleSheet` directly.
+
+## Updating the README screenshots
+
+`scripts/screenshots.mjs` regenerates every image in `docs/screenshots/` from your running Anki:
+
+1. It quits Anki and relaunches it with web-inspector debugging.
+2. It walks the deck list, overview, question and answer screens. It reveals an answer but never grades a card.
+3. It captures each screen in light and dark. Dark is simulated in the page, so your theme setting is untouched.
+4. It relaunches Anki normally.
+
+Review the result with `git diff --stat docs/`.
+
+```bash
+node scripts/screenshots.mjs --deck "My Deck" --size 999x570
+```
+
+| option | effect |
+|---|---|
+| `--deck "Name"` | deck to open (default: the first one) |
+| `--size WxH` | window size in points (default `999x570`) |
+| `--yes` | skip the "this quits Anki" confirmation |
+| `--keep-debug` | leave Anki running with debugging on |
+
+It needs Node 22+, the Xcode command-line tools, and **Screen Recording** permission for your terminal. Resizing the window also needs **Accessibility** permission. Anki is brought to the front for each shot, so leave the mouse alone for the ~20 seconds it takes. Use a profile whose decks you're happy to show publicly.
 
 ## Releasing
 
