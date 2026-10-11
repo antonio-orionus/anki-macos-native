@@ -11,10 +11,21 @@ QTreeView {
     font-size: 13px;
     color: @label@;
 }
-QTreeView::item { padding: 3px 4px; border-radius: 6px; }
-QTreeView::item:hover { background: @fill@; }
-QTreeView::item:selected { background: @fill_strong@; color: @label@; }
+QTreeView::item { padding: 3px 4px; }
+
+/* Hover and selection are one flat band across the whole row. Qt paints the
+   indent area of a row as a separate panel styled by the same ::item rule
+   (no selector reaches it on its own), and the arrow column as one segment
+   per indent level, so rounded corners show as boxes and seams there.
+   Square pieces of one colour join without a seam. Styling ::branch at all
+   stops Qt drawing native arrows, so the disclosure chevrons are drawn here. */
+QTreeView { show-decoration-selected: 1; }
+QTreeView::item, QTreeView::branch { border: none; border-radius: 0; border-image: none; }
 QTreeView::branch { background: transparent; }
+QTreeView::item:hover, QTreeView::branch:hover { background: @fill@; }
+QTreeView::item:selected, QTreeView::branch:selected { background: @fill_strong@; color: @label@; }
+QTreeView::branch:has-children:closed { image: url("@qtdir@/disclosure-closed-@theme@.svg"); }
+QTreeView::branch:has-children:open { image: url("@qtdir@/disclosure-open-@theme@.svg"); }
 
 /* Card/note table: no grid, quiet header, accent selection. Row colours
    for flags, marks and suspension still come from Anki. */

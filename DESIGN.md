@@ -356,7 +356,7 @@ Icons are Lucide outlines on a 24px grid, drawn at 16px (17px in round buttons, 
 - **Focus:** a 3.5px accent ring outside the field; duplicates get a red ring.
 
 ### Browse and Add Windows (Qt)
-- **Sidebar:** the sidebar ground (#ececee / #252527), 13px items with 6px rounded hover and selection pills (fill / fill strong).
+- **Sidebar:** the sidebar ground (#ececee / #252527) with 13px items. Hover and selection are one flat full-row band (fill / fill strong), square because Qt draws the indent area as separate pieces, with drawn disclosure chevrons.
 - **Table:** the group surface, a subtle alternate row, no grid, and an accent selection with on-accent text. The header is 500 12px secondary with hairline separators. Anki's row colours (flags, marked, suspended) are untouched.
 - **Fields (app-wide):** every text field, combo box and spin box is an 8px-corner field surface with a 1px edge, 2px by 8px padding and at least 22px tall. Focus turns the edge to the accent without changing its width. Combo and spin arrows are drawn chevrons.
 - **Buttons:** 8px-corner field surfaces with a 1px edge. **Add** is the accent fill with on-accent 600 text.
