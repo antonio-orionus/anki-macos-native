@@ -88,9 +88,40 @@ On SvelteKit pages, style by Anki's stable component classes (`.deck-options-pag
 - **Specificity of the injected accent.** The live accent is injected as `html.mx{--mx-accent}`, and the CSS default sits on `:root`. Never set `--mx-accent` on `html.mx` in the stylesheet, or the system accent stops applying.
 - **Anki's own reduce-motion.** It is `body.reduce-motion`, separate from `prefers-reduced-motion`. Respect both.
 
-## Not covered yet
+## Coverage
 
-Every main screen and window is covered. Remaining native-only surfaces are Qt dialogs such as Preferences, which get the app-wide field style but otherwise stay native. Since Anki 26.08 the editor is a SvelteKit page: add its path to `SVELTE_PAGES`, the same way deck options works. Do not use `isinstance(context, Editor)`. Qt widgets should get QSS through the `gui_hooks.style_did_init` filter, never `app.setStyleSheet` directly.
+**Styled:** these screens, windows and controls have the macOS look.
+- **Main window:** toolbar and title bar, deck list, overview, reviewer, and the bottom bars.
+- **Deck Options:** SvelteKit `/deck-options`.
+- **Statistics:** SvelteKit `/graphs` (`NewDeckStats`, via `stats_dialog_will_show`).
+- **Browse** (`browser_will_show`).
+- **Add / Edit:** `AddCards` / `EditCurrent`, the legacy note editor (`aqt.editor_legacy.Editor`).
+- **Preferences:** `dialog_manager_did_open_dialog` with name `"Preferences"`.
+- **Popup menus:** the wrapped `QMenu.__init__`.
+- **Every text field, combo box and spin box app-wide:** `qt/fields.qss`.
+
+`fields.qss` is appended to the **app** stylesheet on purpose, after a marker, and re-applied on profile open and theme change, because Anki rewrites the app stylesheet then. Per-window QSS is never set app-wide.
+
+**Not styled yet:** these keep Anki's look, apart from the app-wide fields and menus.
+- **SvelteKit pages:** add the path to `SVELTE_PAGES`.
+  - `congrats`: shown in the main window when a deck is finished.
+  - `card-info`: Browse → Info.
+  - `change-notetype`.
+  - `image-occlusion`.
+  - `import-page`, `import-csv` and `import-anki-package`.
+  - `editor/?mode=…`: the new SvelteKit editor, used by the `NewAddCards` / `NewEditCurrent` registry entries. Those names are **not** in `restyle_window`'s mapping yet.
+- **Qt dialogs:** add a `qt/<name>.qss` and a mapping in `restyle_window`, with a hook or `dialog_manager_did_open_dialog`.
+  - Card layout ("Cards…", `clayout`).
+  - Manage Note Types (`models`) and the Fields dialog (`fields`).
+  - Add-ons manager (`addons`).
+  - Custom Study (`customstudy`) and Filtered Deck (`filtered_deck`).
+  - Export (`import_export`).
+  - Card Previewer (`browser/previewer`).
+  - Find and Replace, Find Duplicates, Reposition, Set Due Date.
+  - Deck Description.
+  - Empty Cards, Check Media, Check Database.
+  - Sync login, Profiles, About, Debug Console.
+- **Intentionally native:** Choose Deck / Choose Note Type (`studydeck`), file pickers, message boxes, the macOS menu bar.
 
 ## Updating the README screenshots
 
