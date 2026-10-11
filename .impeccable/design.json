@@ -1,0 +1,882 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-11T11:46:31+00:00",
+  "title": "Design System: Anki macOS Native",
+  "extensions": {
+    "colorMeta": {
+      "accent": {
+        "role": "primary",
+        "displayName": "System Accent",
+        "canonical": "#0a60ff",
+        "tonalRamp": [
+          "oklch(15% 0.218 257)",
+          "oklch(26% 0.218 257)",
+          "oklch(38% 0.218 257)",
+          "oklch(49% 0.218 257)",
+          "oklch(61% 0.218 257)",
+          "oklch(72% 0.218 257)",
+          "oklch(84% 0.218 257)",
+          "oklch(95% 0.218 257)"
+        ],
+        "note": "Default only; overridden at runtime by the macOS accent injected as html.mx{--mx-accent}."
+      },
+      "on-accent": {
+        "role": "primary",
+        "displayName": "On Accent",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15% 0.000 90)",
+          "oklch(26% 0.000 90)",
+          "oklch(38% 0.000 90)",
+          "oklch(49% 0.000 90)",
+          "oklch(61% 0.000 90)",
+          "oklch(72% 0.000 90)",
+          "oklch(84% 0.000 90)",
+          "oklch(95% 0.000 90)"
+        ],
+        "note": "Computed per accent at runtime: white or black, whichever contrasts more with the live macOS accent."
+      },
+      "state-new": {
+        "role": "secondary",
+        "displayName": "New Blue",
+        "canonical": "#0040dd",
+        "tonalRamp": [
+          "oklch(15% 0.242 263)",
+          "oklch(26% 0.242 263)",
+          "oklch(38% 0.242 263)",
+          "oklch(49% 0.242 263)",
+          "oklch(61% 0.242 263)",
+          "oklch(72% 0.242 263)",
+          "oklch(84% 0.242 263)",
+          "oklch(95% 0.242 263)"
+        ]
+      },
+      "state-learn": {
+        "role": "secondary",
+        "displayName": "Learn Red",
+        "canonical": "#d70015",
+        "tonalRamp": [
+          "oklch(15% 0.225 27)",
+          "oklch(26% 0.225 27)",
+          "oklch(38% 0.225 27)",
+          "oklch(49% 0.225 27)",
+          "oklch(61% 0.225 27)",
+          "oklch(72% 0.225 27)",
+          "oklch(84% 0.225 27)",
+          "oklch(95% 0.225 27)"
+        ]
+      },
+      "state-review": {
+        "role": "secondary",
+        "displayName": "Review Green",
+        "canonical": "#1a7230",
+        "tonalRamp": [
+          "oklch(15% 0.146 148)",
+          "oklch(26% 0.146 148)",
+          "oklch(38% 0.146 148)",
+          "oklch(49% 0.146 148)",
+          "oklch(61% 0.146 148)",
+          "oklch(72% 0.146 148)",
+          "oklch(84% 0.146 148)",
+          "oklch(95% 0.146 148)"
+        ]
+      },
+      "grade-hard": {
+        "role": "secondary",
+        "displayName": "Hard Orange",
+        "canonical": "#c93400",
+        "tonalRamp": [
+          "oklch(15% 0.192 35)",
+          "oklch(26% 0.192 35)",
+          "oklch(38% 0.192 35)",
+          "oklch(49% 0.192 35)",
+          "oklch(61% 0.192 35)",
+          "oklch(72% 0.192 35)",
+          "oklch(84% 0.192 35)",
+          "oklch(95% 0.192 35)"
+        ]
+      },
+      "mark-star": {
+        "role": "tertiary",
+        "displayName": "Mark Star",
+        "canonical": "#e6a700",
+        "tonalRamp": [
+          "oklch(15% 0.160 80)",
+          "oklch(26% 0.160 80)",
+          "oklch(38% 0.160 80)",
+          "oklch(49% 0.160 80)",
+          "oklch(61% 0.160 80)",
+          "oklch(72% 0.160 80)",
+          "oklch(84% 0.160 80)",
+          "oklch(95% 0.160 80)"
+        ],
+        "note": "Marked-note star badge in the reviewer, both themes; glyph colour only, never text."
+      },
+      "window-ground": {
+        "role": "neutral",
+        "displayName": "Window Ground",
+        "canonical": "#f5f5f7",
+        "tonalRamp": [
+          "oklch(15% 0.003 286)",
+          "oklch(26% 0.003 286)",
+          "oklch(38% 0.003 286)",
+          "oklch(49% 0.003 286)",
+          "oklch(61% 0.003 286)",
+          "oklch(72% 0.003 286)",
+          "oklch(84% 0.003 286)",
+          "oklch(95% 0.003 286)"
+        ]
+      },
+      "toolbar-bar": {
+        "role": "neutral",
+        "displayName": "Toolbar Bar",
+        "canonical": "#ececee",
+        "tonalRamp": [
+          "oklch(15% 0.003 286)",
+          "oklch(26% 0.003 286)",
+          "oklch(38% 0.003 286)",
+          "oklch(49% 0.003 286)",
+          "oklch(61% 0.003 286)",
+          "oklch(72% 0.003 286)",
+          "oklch(84% 0.003 286)",
+          "oklch(95% 0.003 286)"
+        ]
+      },
+      "group-surface": {
+        "role": "neutral",
+        "displayName": "Group Surface",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15% 0.000 90)",
+          "oklch(26% 0.000 90)",
+          "oklch(38% 0.000 90)",
+          "oklch(49% 0.000 90)",
+          "oklch(61% 0.000 90)",
+          "oklch(72% 0.000 90)",
+          "oklch(84% 0.000 90)",
+          "oklch(95% 0.000 90)"
+        ]
+      },
+      "label": {
+        "role": "neutral",
+        "displayName": "Label",
+        "canonical": "rgb(0 0 0 / 0.88)",
+        "tonalRamp": [
+          "oklch(15% 0.000 0 / 0.88)",
+          "oklch(26% 0.000 0 / 0.88)",
+          "oklch(38% 0.000 0 / 0.88)",
+          "oklch(49% 0.000 0 / 0.88)",
+          "oklch(61% 0.000 0 / 0.88)",
+          "oklch(72% 0.000 0 / 0.88)",
+          "oklch(84% 0.000 0 / 0.88)",
+          "oklch(95% 0.000 0 / 0.88)"
+        ]
+      },
+      "label-secondary": {
+        "role": "neutral",
+        "displayName": "Label Secondary",
+        "canonical": "rgb(0 0 0 / 0.56)",
+        "tonalRamp": [
+          "oklch(15% 0.000 0 / 0.56)",
+          "oklch(26% 0.000 0 / 0.56)",
+          "oklch(38% 0.000 0 / 0.56)",
+          "oklch(49% 0.000 0 / 0.56)",
+          "oklch(61% 0.000 0 / 0.56)",
+          "oklch(72% 0.000 0 / 0.56)",
+          "oklch(84% 0.000 0 / 0.56)",
+          "oklch(95% 0.000 0 / 0.56)"
+        ]
+      },
+      "label-tertiary": {
+        "role": "neutral",
+        "displayName": "Label Tertiary",
+        "canonical": "rgb(0 0 0 / 0.30)",
+        "tonalRamp": [
+          "oklch(15% 0.000 0 / 0.3)",
+          "oklch(26% 0.000 0 / 0.3)",
+          "oklch(38% 0.000 0 / 0.3)",
+          "oklch(49% 0.000 0 / 0.3)",
+          "oklch(61% 0.000 0 / 0.3)",
+          "oklch(72% 0.000 0 / 0.3)",
+          "oklch(84% 0.000 0 / 0.3)",
+          "oklch(95% 0.000 0 / 0.3)"
+        ]
+      },
+      "separator": {
+        "role": "neutral",
+        "displayName": "Separator",
+        "canonical": "rgb(0 0 0 / 0.09)",
+        "tonalRamp": [
+          "oklch(15% 0.000 0 / 0.09)",
+          "oklch(26% 0.000 0 / 0.09)",
+          "oklch(38% 0.000 0 / 0.09)",
+          "oklch(49% 0.000 0 / 0.09)",
+          "oklch(61% 0.000 0 / 0.09)",
+          "oklch(72% 0.000 0 / 0.09)",
+          "oklch(84% 0.000 0 / 0.09)",
+          "oklch(95% 0.000 0 / 0.09)"
+        ]
+      },
+      "fill": {
+        "role": "neutral",
+        "displayName": "Fill",
+        "canonical": "rgb(120 120 128 / 0.10)",
+        "tonalRamp": [
+          "oklch(15% 0.012 286 / 0.1)",
+          "oklch(26% 0.012 286 / 0.1)",
+          "oklch(38% 0.012 286 / 0.1)",
+          "oklch(49% 0.012 286 / 0.1)",
+          "oklch(61% 0.012 286 / 0.1)",
+          "oklch(72% 0.012 286 / 0.1)",
+          "oklch(84% 0.012 286 / 0.1)",
+          "oklch(95% 0.012 286 / 0.1)"
+        ]
+      },
+      "fill-strong": {
+        "role": "neutral",
+        "displayName": "Fill Strong",
+        "canonical": "rgb(120 120 128 / 0.18)",
+        "tonalRamp": [
+          "oklch(15% 0.012 286 / 0.18)",
+          "oklch(26% 0.012 286 / 0.18)",
+          "oklch(38% 0.012 286 / 0.18)",
+          "oklch(49% 0.012 286 / 0.18)",
+          "oklch(61% 0.012 286 / 0.18)",
+          "oklch(72% 0.012 286 / 0.18)",
+          "oklch(84% 0.012 286 / 0.18)",
+          "oklch(95% 0.012 286 / 0.18)"
+        ]
+      },
+      "glass": {
+        "role": "neutral",
+        "displayName": "Glass",
+        "canonical": "rgb(255 255 255 / 0.74)",
+        "tonalRamp": [
+          "oklch(15% 0.000 90 / 0.74)",
+          "oklch(26% 0.000 90 / 0.74)",
+          "oklch(38% 0.000 90 / 0.74)",
+          "oklch(49% 0.000 90 / 0.74)",
+          "oklch(61% 0.000 90 / 0.74)",
+          "oklch(72% 0.000 90 / 0.74)",
+          "oklch(84% 0.000 90 / 0.74)",
+          "oklch(95% 0.000 90 / 0.74)"
+        ]
+      },
+      "glass-hover": {
+        "role": "neutral",
+        "displayName": "Glass Hover",
+        "canonical": "rgb(255 255 255 / 0.95)",
+        "tonalRamp": [
+          "oklch(15% 0.000 90 / 0.95)",
+          "oklch(26% 0.000 90 / 0.95)",
+          "oklch(38% 0.000 90 / 0.95)",
+          "oklch(49% 0.000 90 / 0.95)",
+          "oklch(61% 0.000 90 / 0.95)",
+          "oklch(72% 0.000 90 / 0.95)",
+          "oklch(84% 0.000 90 / 0.95)",
+          "oklch(95% 0.000 90 / 0.95)"
+        ]
+      },
+      "glass-press": {
+        "role": "neutral",
+        "displayName": "Glass Press",
+        "canonical": "rgb(232 232 236 / 0.95)",
+        "tonalRamp": [
+          "oklch(15% 0.005 286 / 0.95)",
+          "oklch(26% 0.005 286 / 0.95)",
+          "oklch(38% 0.005 286 / 0.95)",
+          "oklch(49% 0.005 286 / 0.95)",
+          "oklch(61% 0.005 286 / 0.95)",
+          "oklch(72% 0.005 286 / 0.95)",
+          "oklch(84% 0.005 286 / 0.95)",
+          "oklch(95% 0.005 286 / 0.95)"
+        ]
+      },
+      "glass-edge": {
+        "role": "neutral",
+        "displayName": "Glass Edge",
+        "canonical": "rgb(0 0 0 / 0.08)",
+        "tonalRamp": [
+          "oklch(15% 0.000 0 / 0.08)",
+          "oklch(26% 0.000 0 / 0.08)",
+          "oklch(38% 0.000 0 / 0.08)",
+          "oklch(49% 0.000 0 / 0.08)",
+          "oklch(61% 0.000 0 / 0.08)",
+          "oklch(72% 0.000 0 / 0.08)",
+          "oklch(84% 0.000 0 / 0.08)",
+          "oklch(95% 0.000 0 / 0.08)"
+        ]
+      },
+      "glass-specular": {
+        "role": "neutral",
+        "displayName": "Glass Specular",
+        "canonical": "rgb(255 255 255 / 0.95)",
+        "tonalRamp": [
+          "oklch(15% 0.000 90 / 0.95)",
+          "oklch(26% 0.000 90 / 0.95)",
+          "oklch(38% 0.000 90 / 0.95)",
+          "oklch(49% 0.000 90 / 0.95)",
+          "oklch(61% 0.000 90 / 0.95)",
+          "oklch(72% 0.000 90 / 0.95)",
+          "oklch(84% 0.000 90 / 0.95)",
+          "oklch(95% 0.000 90 / 0.95)"
+        ]
+      },
+      "state-new-dark": {
+        "role": "secondary",
+        "displayName": "New Blue (dark)",
+        "canonical": "#409cff",
+        "tonalRamp": [
+          "oklch(15% 0.170 253)",
+          "oklch(26% 0.170 253)",
+          "oklch(38% 0.170 253)",
+          "oklch(49% 0.170 253)",
+          "oklch(61% 0.170 253)",
+          "oklch(72% 0.170 253)",
+          "oklch(84% 0.170 253)",
+          "oklch(95% 0.170 253)"
+        ]
+      },
+      "state-learn-dark": {
+        "role": "secondary",
+        "displayName": "Learn Red (dark)",
+        "canonical": "#ff6961",
+        "tonalRamp": [
+          "oklch(15% 0.185 26)",
+          "oklch(26% 0.185 26)",
+          "oklch(38% 0.185 26)",
+          "oklch(49% 0.185 26)",
+          "oklch(61% 0.185 26)",
+          "oklch(72% 0.185 26)",
+          "oklch(84% 0.185 26)",
+          "oklch(95% 0.185 26)"
+        ]
+      },
+      "state-review-dark": {
+        "role": "secondary",
+        "displayName": "Review Green (dark)",
+        "canonical": "#30db5b",
+        "tonalRamp": [
+          "oklch(15% 0.218 147)",
+          "oklch(26% 0.218 147)",
+          "oklch(38% 0.218 147)",
+          "oklch(49% 0.218 147)",
+          "oklch(61% 0.218 147)",
+          "oklch(72% 0.218 147)",
+          "oklch(84% 0.218 147)",
+          "oklch(95% 0.218 147)"
+        ]
+      },
+      "grade-hard-dark": {
+        "role": "secondary",
+        "displayName": "Hard Orange (dark)",
+        "canonical": "#ffb340",
+        "tonalRamp": [
+          "oklch(15% 0.152 73)",
+          "oklch(26% 0.152 73)",
+          "oklch(38% 0.152 73)",
+          "oklch(49% 0.152 73)",
+          "oklch(61% 0.152 73)",
+          "oklch(72% 0.152 73)",
+          "oklch(84% 0.152 73)",
+          "oklch(95% 0.152 73)"
+        ]
+      },
+      "window-ground-dark": {
+        "role": "neutral",
+        "displayName": "Window Ground (dark)",
+        "canonical": "#1e1e1f",
+        "tonalRamp": [
+          "oklch(15% 0.002 286)",
+          "oklch(26% 0.002 286)",
+          "oklch(38% 0.002 286)",
+          "oklch(49% 0.002 286)",
+          "oklch(61% 0.002 286)",
+          "oklch(72% 0.002 286)",
+          "oklch(84% 0.002 286)",
+          "oklch(95% 0.002 286)"
+        ]
+      },
+      "toolbar-bar-dark": {
+        "role": "neutral",
+        "displayName": "Toolbar Bar (dark)",
+        "canonical": "#29292b",
+        "tonalRamp": [
+          "oklch(15% 0.004 286)",
+          "oklch(26% 0.004 286)",
+          "oklch(38% 0.004 286)",
+          "oklch(49% 0.004 286)",
+          "oklch(61% 0.004 286)",
+          "oklch(72% 0.004 286)",
+          "oklch(84% 0.004 286)",
+          "oklch(95% 0.004 286)"
+        ]
+      },
+      "group-surface-dark": {
+        "role": "neutral",
+        "displayName": "Group Surface (dark)",
+        "canonical": "#2a2a2c",
+        "tonalRamp": [
+          "oklch(15% 0.004 286)",
+          "oklch(26% 0.004 286)",
+          "oklch(38% 0.004 286)",
+          "oklch(49% 0.004 286)",
+          "oklch(61% 0.004 286)",
+          "oklch(72% 0.004 286)",
+          "oklch(84% 0.004 286)",
+          "oklch(95% 0.004 286)"
+        ]
+      },
+      "label-dark": {
+        "role": "neutral",
+        "displayName": "Label (dark)",
+        "canonical": "rgb(255 255 255 / 0.90)",
+        "tonalRamp": [
+          "oklch(15% 0.000 90 / 0.9)",
+          "oklch(26% 0.000 90 / 0.9)",
+          "oklch(38% 0.000 90 / 0.9)",
+          "oklch(49% 0.000 90 / 0.9)",
+          "oklch(61% 0.000 90 / 0.9)",
+          "oklch(72% 0.000 90 / 0.9)",
+          "oklch(84% 0.000 90 / 0.9)",
+          "oklch(95% 0.000 90 / 0.9)"
+        ]
+      },
+      "label-secondary-dark": {
+        "role": "neutral",
+        "displayName": "Label Secondary (dark)",
+        "canonical": "rgb(235 235 245 / 0.60)",
+        "tonalRamp": [
+          "oklch(15% 0.013 286 / 0.6)",
+          "oklch(26% 0.013 286 / 0.6)",
+          "oklch(38% 0.013 286 / 0.6)",
+          "oklch(49% 0.013 286 / 0.6)",
+          "oklch(61% 0.013 286 / 0.6)",
+          "oklch(72% 0.013 286 / 0.6)",
+          "oklch(84% 0.013 286 / 0.6)",
+          "oklch(95% 0.013 286 / 0.6)"
+        ]
+      },
+      "label-tertiary-dark": {
+        "role": "neutral",
+        "displayName": "Label Tertiary (dark)",
+        "canonical": "rgb(235 235 245 / 0.30)",
+        "tonalRamp": [
+          "oklch(15% 0.013 286 / 0.3)",
+          "oklch(26% 0.013 286 / 0.3)",
+          "oklch(38% 0.013 286 / 0.3)",
+          "oklch(49% 0.013 286 / 0.3)",
+          "oklch(61% 0.013 286 / 0.3)",
+          "oklch(72% 0.013 286 / 0.3)",
+          "oklch(84% 0.013 286 / 0.3)",
+          "oklch(95% 0.013 286 / 0.3)"
+        ]
+      },
+      "separator-dark": {
+        "role": "neutral",
+        "displayName": "Separator (dark)",
+        "canonical": "rgb(255 255 255 / 0.09)",
+        "tonalRamp": [
+          "oklch(15% 0.000 90 / 0.09)",
+          "oklch(26% 0.000 90 / 0.09)",
+          "oklch(38% 0.000 90 / 0.09)",
+          "oklch(49% 0.000 90 / 0.09)",
+          "oklch(61% 0.000 90 / 0.09)",
+          "oklch(72% 0.000 90 / 0.09)",
+          "oklch(84% 0.000 90 / 0.09)",
+          "oklch(95% 0.000 90 / 0.09)"
+        ]
+      },
+      "fill-dark": {
+        "role": "neutral",
+        "displayName": "Fill (dark)",
+        "canonical": "rgb(120 120 128 / 0.20)",
+        "tonalRamp": [
+          "oklch(15% 0.012 286 / 0.2)",
+          "oklch(26% 0.012 286 / 0.2)",
+          "oklch(38% 0.012 286 / 0.2)",
+          "oklch(49% 0.012 286 / 0.2)",
+          "oklch(61% 0.012 286 / 0.2)",
+          "oklch(72% 0.012 286 / 0.2)",
+          "oklch(84% 0.012 286 / 0.2)",
+          "oklch(95% 0.012 286 / 0.2)"
+        ]
+      },
+      "fill-strong-dark": {
+        "role": "neutral",
+        "displayName": "Fill Strong (dark)",
+        "canonical": "rgb(120 120 128 / 0.32)",
+        "tonalRamp": [
+          "oklch(15% 0.012 286 / 0.32)",
+          "oklch(26% 0.012 286 / 0.32)",
+          "oklch(38% 0.012 286 / 0.32)",
+          "oklch(49% 0.012 286 / 0.32)",
+          "oklch(61% 0.012 286 / 0.32)",
+          "oklch(72% 0.012 286 / 0.32)",
+          "oklch(84% 0.012 286 / 0.32)",
+          "oklch(95% 0.012 286 / 0.32)"
+        ]
+      },
+      "glass-dark": {
+        "role": "neutral",
+        "displayName": "Glass (dark)",
+        "canonical": "rgb(255 255 255 / 0.08)",
+        "tonalRamp": [
+          "oklch(15% 0.000 90 / 0.08)",
+          "oklch(26% 0.000 90 / 0.08)",
+          "oklch(38% 0.000 90 / 0.08)",
+          "oklch(49% 0.000 90 / 0.08)",
+          "oklch(61% 0.000 90 / 0.08)",
+          "oklch(72% 0.000 90 / 0.08)",
+          "oklch(84% 0.000 90 / 0.08)",
+          "oklch(95% 0.000 90 / 0.08)"
+        ]
+      },
+      "glass-hover-dark": {
+        "role": "neutral",
+        "displayName": "Glass Hover (dark)",
+        "canonical": "rgb(255 255 255 / 0.13)",
+        "tonalRamp": [
+          "oklch(15% 0.000 90 / 0.13)",
+          "oklch(26% 0.000 90 / 0.13)",
+          "oklch(38% 0.000 90 / 0.13)",
+          "oklch(49% 0.000 90 / 0.13)",
+          "oklch(61% 0.000 90 / 0.13)",
+          "oklch(72% 0.000 90 / 0.13)",
+          "oklch(84% 0.000 90 / 0.13)",
+          "oklch(95% 0.000 90 / 0.13)"
+        ]
+      },
+      "glass-press-dark": {
+        "role": "neutral",
+        "displayName": "Glass Press (dark)",
+        "canonical": "rgb(255 255 255 / 0.05)",
+        "tonalRamp": [
+          "oklch(15% 0.000 90 / 0.05)",
+          "oklch(26% 0.000 90 / 0.05)",
+          "oklch(38% 0.000 90 / 0.05)",
+          "oklch(49% 0.000 90 / 0.05)",
+          "oklch(61% 0.000 90 / 0.05)",
+          "oklch(72% 0.000 90 / 0.05)",
+          "oklch(84% 0.000 90 / 0.05)",
+          "oklch(95% 0.000 90 / 0.05)"
+        ]
+      },
+      "glass-edge-dark": {
+        "role": "neutral",
+        "displayName": "Glass Edge (dark)",
+        "canonical": "rgb(255 255 255 / 0.07)",
+        "tonalRamp": [
+          "oklch(15% 0.000 90 / 0.07)",
+          "oklch(26% 0.000 90 / 0.07)",
+          "oklch(38% 0.000 90 / 0.07)",
+          "oklch(49% 0.000 90 / 0.07)",
+          "oklch(61% 0.000 90 / 0.07)",
+          "oklch(72% 0.000 90 / 0.07)",
+          "oklch(84% 0.000 90 / 0.07)",
+          "oklch(95% 0.000 90 / 0.07)"
+        ]
+      },
+      "glass-specular-dark": {
+        "role": "neutral",
+        "displayName": "Glass Specular (dark)",
+        "canonical": "rgb(255 255 255 / 0.16)",
+        "tonalRamp": [
+          "oklch(15% 0.000 90 / 0.16)",
+          "oklch(26% 0.000 90 / 0.16)",
+          "oklch(38% 0.000 90 / 0.16)",
+          "oklch(49% 0.000 90 / 0.16)",
+          "oklch(61% 0.000 90 / 0.16)",
+          "oklch(72% 0.000 90 / 0.16)",
+          "oklch(84% 0.000 90 / 0.16)",
+          "oklch(95% 0.000 90 / 0.16)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "large-title": {
+        "displayName": "Large Title",
+        "purpose": "One per screen: Decks, the deck name on Overview."
+      },
+      "card": {
+        "displayName": "Card",
+        "purpose": "Reviewer question and answer text, centred, max 680px."
+      },
+      "prominent": {
+        "displayName": "Prominent",
+        "purpose": "Accent capsule label; overview count values."
+      },
+      "row": {
+        "displayName": "Row",
+        "purpose": "Deck names and grouped-list rows; grade labels at 600."
+      },
+      "control": {
+        "displayName": "Control",
+        "purpose": "Toolbar items and capsule buttons."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Page default, subtitles, deck descriptions (max 65ch)."
+      },
+      "count": {
+        "displayName": "Count",
+        "purpose": "Count badges and the remaining-count line; tabular."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Studied-today footnote and hints; tabular."
+      },
+      "column-label": {
+        "displayName": "Column Label",
+        "purpose": "Column headings above the grouped list."
+      }
+    },
+    "shadows": [
+      {
+        "name": "glass",
+        "value": "0 1px 2px rgb(0 0 0 / 0.06), 0 4px 14px rgb(0 0 0 / 0.07)",
+        "valueDark": "0 1px 2px rgb(0 0 0 / 0.30), 0 4px 14px rgb(0 0 0 / 0.28)",
+        "purpose": "Resting glass controls: toolbar groups, round buttons, mark/flag badges."
+      },
+      {
+        "name": "glass-lift",
+        "value": "0 2px 4px rgb(0 0 0 / 0.07), 0 10px 28px rgb(0 0 0 / 0.10)",
+        "valueDark": "0 2px 4px rgb(0 0 0 / 0.35), 0 10px 28px rgb(0 0 0 / 0.40)",
+        "purpose": "The prominent action and the reviewer answer capsule."
+      },
+      {
+        "name": "glass-rim",
+        "value": "inset 0 0.5px 0 var(--mx-glass-spec), inset 0 0 0 0.5px var(--mx-glass-edge)",
+        "purpose": "Specular top edge plus inner edge; stacked before glass or glass-lift on every glass control."
+      },
+      {
+        "name": "accent-rim",
+        "value": "inset 0 0.5px 0 rgb(255 255 255 / 0.35), inset 0 -0.5px 0 rgb(0 0 0 / 0.12)",
+        "purpose": "Specular top and faint bottom edge on accent-filled capsules."
+      },
+      {
+        "name": "group",
+        "value": "0 0 0 0.5px rgb(0 0 0 / 0.07), 0 1px 2px rgb(0 0 0 / 0.04)",
+        "valueDark": "0 0 0 0.5px rgb(255 255 255 / 0.06), 0 1px 2px rgb(0 0 0 / 0.25)",
+        "purpose": "Opaque grouped panels and callouts."
+      },
+      {
+        "name": "focus-ring",
+        "value": "0 0 0 3.5px color-mix(in srgb, var(--mx-accent) 45%, transparent)",
+        "purpose": "Keyboard focus on every focusable element."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-house",
+        "value": "cubic-bezier(0.2, 0.9, 0.25, 1)",
+        "purpose": "Chevron rotation, deck-list entrance, answer capsule morph."
+      },
+      {
+        "name": "control-feedback",
+        "value": "120ms ease",
+        "purpose": "Hover/press background and 0.97 press scale on capsule controls (rows 100ms)."
+      },
+      {
+        "name": "chevron",
+        "value": "160ms",
+        "purpose": "Disclosure chevron rotates 90 degrees."
+      },
+      {
+        "name": "enter",
+        "value": "320ms",
+        "purpose": "Deck list rises 6px from a 3px blur; skipped under reduce-motion."
+      },
+      {
+        "name": "capsule-morph",
+        "value": "340ms width; segments 260ms, delay 60ms + 24ms stagger, from scale 0.94 and 4px blur",
+        "purpose": "Signature: Show Answer capsule morphs into the grade capsule; skipped under Anki reduce-motion or the system preference."
+      },
+      {
+        "name": "backdrop",
+        "value": "blur(24px) saturate(1.8)",
+        "purpose": "Liquid Glass backdrop on glass groups and the answer capsule."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "narrow",
+        "value": "640px",
+        "purpose": "Grade segments 104px to 80px; Show Answer min width 300px to 220px."
+      }
+    ],
+    "layout": {
+      "toolbarHeight": "52px",
+      "trafficLightCentreY": "26px",
+      "trafficLightGutter": "84px",
+      "deckColumn": "720px",
+      "overviewColumn": "460px",
+      "cardColumn": "680px",
+      "answerField": "480px",
+      "reviewerSideColumns": "120px"
+    },
+    "themes": {
+      "light": "html.mx",
+      "dark": "html.mx.night-mode",
+      "accentOverride": "html.mx{--mx-accent:<macOS accent>} injected from Qt; :root default #0a60ff"
+    },
+    "icons": {
+      "set": "Lucide (ISC)",
+      "grid": "24px",
+      "size": "16px (17px round buttons, 13px chevron)",
+      "strokeWidth": 1.9
+    }
+  },
+  "components": [
+    {
+      "name": "Toolbar Glass Group",
+      "kind": "nav",
+      "refersTo": "glass-group",
+      "description": "Segmented glass capsule holding the toolbar's capsule buttons; current screen keeps fill strong and an accent icon.",
+      "html": "<div class=\"ds-group\"><a class=\"ds-btn ds-current\" href=\"#\"><svg class=\"ds-icon\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z\"/><path d=\"m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65\"/><path d=\"m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65\"/></svg>Decks</a><a class=\"ds-btn\" href=\"#\"><svg class=\"ds-icon\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"M12 5v14\"/></svg>Add</a><a class=\"ds-btn\" href=\"#\"><svg class=\"ds-icon\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"7.5\"/><path d=\"m21 21-4.3-4.3\"/></svg>Browse</a><a class=\"ds-btn\" href=\"#\"><svg class=\"ds-icon\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 3v16a2 2 0 0 0 2 2h16\"/><path d=\"M18 17V9\"/><path d=\"M13 17V5\"/><path d=\"M8 17v-3\"/></svg>Stats</a></div>",
+      "css": ":host{--mx-accent:#0a60ff;--mx-font:-apple-system,BlinkMacSystemFont,\"SF Pro Text\",\"Helvetica Neue\",sans-serif;--mx-ground:#f5f5f7;--mx-group:#ffffff;--mx-label:rgb(0 0 0 / 0.88);--mx-label-2:rgb(0 0 0 / 0.56);--mx-label-3:rgb(0 0 0 / 0.30);--mx-separator:rgb(0 0 0 / 0.09);--mx-fill:rgb(120 120 128 / 0.10);--mx-fill-strong:rgb(120 120 128 / 0.18);--mx-on-accent:#fff;--mx-red:#d70015;--mx-orange:#c93400;--mx-green:#1a7230;--mx-blue:#0040dd;--mx-glass:rgb(255 255 255 / 0.74);--mx-glass-hover:rgb(255 255 255 / 0.95);--mx-glass-press:rgb(232 232 236 / 0.95);--mx-glass-edge:rgb(0 0 0 / 0.08);--mx-glass-spec:rgb(255 255 255 / 0.95);--mx-glass-shadow:0 1px 2px rgb(0 0 0 / 0.06),0 4px 14px rgb(0 0 0 / 0.07);--mx-glass-shadow-lift:0 2px 4px rgb(0 0 0 / 0.07),0 10px 28px rgb(0 0 0 / 0.10);--mx-group-shadow:0 0 0 0.5px rgb(0 0 0 / 0.07),0 1px 2px rgb(0 0 0 / 0.04);font-family:var(--mx-font)} .ds-btn{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;border:none;border-radius:999px;background:transparent;color:var(--mx-label);font:500 13px/1 var(--mx-font);letter-spacing:-0.01em;transition:background-color 120ms ease,transform 120ms ease}.ds-btn .ds-icon{color:var(--mx-label-2)}.ds-btn:hover{background:var(--mx-fill)}.ds-btn:hover .ds-icon{color:var(--mx-label)}.ds-btn:active{background:var(--mx-fill-strong);transform:scale(0.97)}.ds-btn:focus-visible{outline:none;box-shadow:0 0 0 3.5px color-mix(in srgb,var(--mx-accent) 45%,transparent);}.ds-btn.ds-current{background:var(--mx-fill-strong)}.ds-btn.ds-current .ds-icon{color:var(--mx-accent)}.ds-group{display:inline-flex;align-items:center;padding:3px;border-radius:999px;background:var(--mx-glass);box-shadow:inset 0 0.5px 0 var(--mx-glass-spec),inset 0 0 0 0.5px var(--mx-glass-edge),var(--mx-glass-shadow);-webkit-backdrop-filter:blur(24px) saturate(1.8);backdrop-filter:blur(24px) saturate(1.8);}.ds-group>.ds-btn+.ds-btn{position:relative}.ds-group>.ds-btn+.ds-btn::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:0.5px;background:var(--mx-separator)}.ds-group>.ds-btn:hover::before,.ds-group>.ds-btn:hover+.ds-btn::before{opacity:0}.ds-btn{text-decoration:none}"
+    },
+    {
+      "name": "Capsule Button",
+      "kind": "button",
+      "refersTo": "button-capsule",
+      "description": "Transparent 28px capsule; lives in a glass group or alone.",
+      "html": "<button class=\"ds-btn\"><svg class=\"ds-icon\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"M12 5v14\"/></svg>Create Deck</button>",
+      "css": ":host{--mx-accent:#0a60ff;--mx-font:-apple-system,BlinkMacSystemFont,\"SF Pro Text\",\"Helvetica Neue\",sans-serif;--mx-ground:#f5f5f7;--mx-group:#ffffff;--mx-label:rgb(0 0 0 / 0.88);--mx-label-2:rgb(0 0 0 / 0.56);--mx-label-3:rgb(0 0 0 / 0.30);--mx-separator:rgb(0 0 0 / 0.09);--mx-fill:rgb(120 120 128 / 0.10);--mx-fill-strong:rgb(120 120 128 / 0.18);--mx-on-accent:#fff;--mx-red:#d70015;--mx-orange:#c93400;--mx-green:#1a7230;--mx-blue:#0040dd;--mx-glass:rgb(255 255 255 / 0.74);--mx-glass-hover:rgb(255 255 255 / 0.95);--mx-glass-press:rgb(232 232 236 / 0.95);--mx-glass-edge:rgb(0 0 0 / 0.08);--mx-glass-spec:rgb(255 255 255 / 0.95);--mx-glass-shadow:0 1px 2px rgb(0 0 0 / 0.06),0 4px 14px rgb(0 0 0 / 0.07);--mx-glass-shadow-lift:0 2px 4px rgb(0 0 0 / 0.07),0 10px 28px rgb(0 0 0 / 0.10);--mx-group-shadow:0 0 0 0.5px rgb(0 0 0 / 0.07),0 1px 2px rgb(0 0 0 / 0.04);font-family:var(--mx-font)} .ds-btn{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;border:none;border-radius:999px;background:transparent;color:var(--mx-label);font:500 13px/1 var(--mx-font);letter-spacing:-0.01em;transition:background-color 120ms ease,transform 120ms ease}.ds-btn .ds-icon{color:var(--mx-label-2)}.ds-btn:hover{background:var(--mx-fill)}.ds-btn:hover .ds-icon{color:var(--mx-label)}.ds-btn:active{background:var(--mx-fill-strong);transform:scale(0.97)}.ds-btn:focus-visible{outline:none;box-shadow:0 0 0 3.5px color-mix(in srgb,var(--mx-accent) 45%,transparent);}.ds-btn.ds-current{background:var(--mx-fill-strong)}.ds-btn.ds-current .ds-icon{color:var(--mx-accent)}"
+    },
+    {
+      "name": "Prominent Action",
+      "kind": "button",
+      "refersTo": "button-prominent",
+      "description": "The one accent-filled action per screen (Study Now).",
+      "html": "<button class=\"ds-prominent\">Study Now</button>",
+      "css": ":host{--mx-accent:#0a60ff;--mx-font:-apple-system,BlinkMacSystemFont,\"SF Pro Text\",\"Helvetica Neue\",sans-serif;--mx-ground:#f5f5f7;--mx-group:#ffffff;--mx-label:rgb(0 0 0 / 0.88);--mx-label-2:rgb(0 0 0 / 0.56);--mx-label-3:rgb(0 0 0 / 0.30);--mx-separator:rgb(0 0 0 / 0.09);--mx-fill:rgb(120 120 128 / 0.10);--mx-fill-strong:rgb(120 120 128 / 0.18);--mx-on-accent:#fff;--mx-red:#d70015;--mx-orange:#c93400;--mx-green:#1a7230;--mx-blue:#0040dd;--mx-glass:rgb(255 255 255 / 0.74);--mx-glass-hover:rgb(255 255 255 / 0.95);--mx-glass-press:rgb(232 232 236 / 0.95);--mx-glass-edge:rgb(0 0 0 / 0.08);--mx-glass-spec:rgb(255 255 255 / 0.95);--mx-glass-shadow:0 1px 2px rgb(0 0 0 / 0.06),0 4px 14px rgb(0 0 0 / 0.07);--mx-glass-shadow-lift:0 2px 4px rgb(0 0 0 / 0.07),0 10px 28px rgb(0 0 0 / 0.10);--mx-group-shadow:0 0 0 0.5px rgb(0 0 0 / 0.07),0 1px 2px rgb(0 0 0 / 0.04);font-family:var(--mx-font)} .ds-prominent{height:40px;min-width:240px;padding:0 22px;border:none;border-radius:999px;background:var(--mx-accent);color:var(--mx-on-accent);font:600 15px/1 var(--mx-font);letter-spacing:-0.015em;box-shadow:inset 0 0.5px 0 rgb(255 255 255 / 0.35),inset 0 -0.5px 0 rgb(0 0 0 / 0.12),var(--mx-glass-shadow-lift);transition:background-color 120ms ease}.ds-prominent:hover{background:color-mix(in srgb,var(--mx-accent) 90%,white)}.ds-prominent:active{background:color-mix(in srgb,var(--mx-accent) 88%,black)}.ds-prominent:focus-visible{outline:none;box-shadow:0 0 0 3.5px color-mix(in srgb,var(--mx-accent) 45%,transparent),var(--mx-glass-shadow-lift)}"
+    },
+    {
+      "name": "Round Glass Button",
+      "kind": "button",
+      "refersTo": "button-round",
+      "description": "34px icon-only glass circle for reviewer side actions; label lives in the tooltip.",
+      "html": "<button class=\"ds-round\" aria-label=\"More\"><svg class=\"ds-icon\" width=\"17\" height=\"17\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"1.25\"/><circle cx=\"19\" cy=\"12\" r=\"1.25\"/><circle cx=\"5\" cy=\"12\" r=\"1.25\"/></svg></button>",
+      "css": ":host{--mx-accent:#0a60ff;--mx-font:-apple-system,BlinkMacSystemFont,\"SF Pro Text\",\"Helvetica Neue\",sans-serif;--mx-ground:#f5f5f7;--mx-group:#ffffff;--mx-label:rgb(0 0 0 / 0.88);--mx-label-2:rgb(0 0 0 / 0.56);--mx-label-3:rgb(0 0 0 / 0.30);--mx-separator:rgb(0 0 0 / 0.09);--mx-fill:rgb(120 120 128 / 0.10);--mx-fill-strong:rgb(120 120 128 / 0.18);--mx-on-accent:#fff;--mx-red:#d70015;--mx-orange:#c93400;--mx-green:#1a7230;--mx-blue:#0040dd;--mx-glass:rgb(255 255 255 / 0.74);--mx-glass-hover:rgb(255 255 255 / 0.95);--mx-glass-press:rgb(232 232 236 / 0.95);--mx-glass-edge:rgb(0 0 0 / 0.08);--mx-glass-spec:rgb(255 255 255 / 0.95);--mx-glass-shadow:0 1px 2px rgb(0 0 0 / 0.06),0 4px 14px rgb(0 0 0 / 0.07);--mx-glass-shadow-lift:0 2px 4px rgb(0 0 0 / 0.07),0 10px 28px rgb(0 0 0 / 0.10);--mx-group-shadow:0 0 0 0.5px rgb(0 0 0 / 0.07),0 1px 2px rgb(0 0 0 / 0.04);font-family:var(--mx-font)} .ds-round{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;padding:0;border:none;border-radius:50%;color:var(--mx-label);background:var(--mx-glass);box-shadow:inset 0 0.5px 0 var(--mx-glass-spec),inset 0 0 0 0.5px var(--mx-glass-edge),var(--mx-glass-shadow);-webkit-backdrop-filter:blur(24px) saturate(1.8);backdrop-filter:blur(24px) saturate(1.8);}.ds-round:hover{background:var(--mx-glass-hover)}.ds-round:active{background:var(--mx-glass-press)}.ds-round:focus-visible{outline:none;box-shadow:0 0 0 3.5px color-mix(in srgb,var(--mx-accent) 45%,transparent);}"
+    },
+    {
+      "name": "Grouped Deck List",
+      "kind": "card",
+      "refersTo": "grouped-list",
+      "description": "Opaque 12px inset group of 40px deck rows with hairline separators, count badges and an options ellipsis.",
+      "html": "<div class=\"ds-list\"><div class=\"ds-deck ds-current-row\"><span class=\"ds-chev\"><svg class=\"ds-icon\" width=\"13\" height=\"13\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"/></svg></span><span class=\"ds-name\">Probability</span><span class=\"ds-badge ds-new\">20</span><span class=\"ds-zero\">0</span><span class=\"ds-zero\">0</span><button class=\"ds-opts\" aria-label=\"Deck options\"><svg class=\"ds-icon\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"1.25\"/><circle cx=\"19\" cy=\"12\" r=\"1.25\"/><circle cx=\"5\" cy=\"12\" r=\"1.25\"/></svg></button></div><div class=\"ds-deck\"><span class=\"ds-chev\"></span><span class=\"ds-name\">Spanish</span><span class=\"ds-zero\">0</span><span class=\"ds-badge ds-learn\">3</span><span class=\"ds-badge ds-review\">41</span><button class=\"ds-opts\" aria-label=\"Deck options\"><svg class=\"ds-icon\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"1.25\"/><circle cx=\"19\" cy=\"12\" r=\"1.25\"/><circle cx=\"5\" cy=\"12\" r=\"1.25\"/></svg></button></div></div>",
+      "css": ":host{--mx-accent:#0a60ff;--mx-font:-apple-system,BlinkMacSystemFont,\"SF Pro Text\",\"Helvetica Neue\",sans-serif;--mx-ground:#f5f5f7;--mx-group:#ffffff;--mx-label:rgb(0 0 0 / 0.88);--mx-label-2:rgb(0 0 0 / 0.56);--mx-label-3:rgb(0 0 0 / 0.30);--mx-separator:rgb(0 0 0 / 0.09);--mx-fill:rgb(120 120 128 / 0.10);--mx-fill-strong:rgb(120 120 128 / 0.18);--mx-on-accent:#fff;--mx-red:#d70015;--mx-orange:#c93400;--mx-green:#1a7230;--mx-blue:#0040dd;--mx-glass:rgb(255 255 255 / 0.74);--mx-glass-hover:rgb(255 255 255 / 0.95);--mx-glass-press:rgb(232 232 236 / 0.95);--mx-glass-edge:rgb(0 0 0 / 0.08);--mx-glass-spec:rgb(255 255 255 / 0.95);--mx-glass-shadow:0 1px 2px rgb(0 0 0 / 0.06),0 4px 14px rgb(0 0 0 / 0.07);--mx-glass-shadow-lift:0 2px 4px rgb(0 0 0 / 0.07),0 10px 28px rgb(0 0 0 / 0.10);--mx-group-shadow:0 0 0 0.5px rgb(0 0 0 / 0.07),0 1px 2px rgb(0 0 0 / 0.04);font-family:var(--mx-font)} .ds-list{max-width:560px;border-radius:12px;background:var(--mx-group);box-shadow:var(--mx-group-shadow);overflow:hidden}.ds-deck{display:flex;align-items:center;gap:4px;height:40px;padding:0 8px 0 12px;box-shadow:inset 0 -0.5px 0 var(--mx-separator);transition:background-color 100ms ease}.ds-deck:last-child{box-shadow:none}.ds-deck:hover{background:color-mix(in srgb,var(--mx-group),var(--mx-label) 4%)}.ds-current-row{background:color-mix(in srgb,var(--mx-group),var(--mx-accent) 13%)}.ds-chev{display:inline-flex;width:18px;color:var(--mx-label-2)}.ds-name{flex:1;color:var(--mx-label);font:500 14px/1.2 var(--mx-font);letter-spacing:-0.012em}.ds-badge,.ds-zero{display:inline-block;width:64px;text-align:center;font:600 12px/16px var(--mx-font);font-variant-numeric:tabular-nums}.ds-badge{width:auto;min-width:26px;margin:0 19px;padding:2px 7px;border-radius:999px;box-sizing:border-box}.ds-new{color:var(--mx-blue);background:color-mix(in srgb,var(--mx-blue) 12%,transparent)}.ds-learn{color:var(--mx-red);background:color-mix(in srgb,var(--mx-red) 12%,transparent)}.ds-review{color:var(--mx-green);background:color-mix(in srgb,var(--mx-green) 12%,transparent)}.ds-zero{font-weight:500;color:var(--mx-label-2)}.ds-opts{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;margin-left:8px;border:none;border-radius:50%;background:none;color:var(--mx-label-3);transition:background-color 120ms ease,color 120ms ease}.ds-deck:hover .ds-opts{color:var(--mx-label-2)}.ds-opts:hover{background:var(--mx-fill);color:var(--mx-label)}.ds-opts:focus-visible{outline:none;box-shadow:0 0 0 3.5px color-mix(in srgb,var(--mx-accent) 45%,transparent);}"
+    },
+    {
+      "name": "Overview Summary",
+      "kind": "card",
+      "refersTo": "grouped-row",
+      "description": "Three-row grouped summary with state dots and tabular values; zero rows fade.",
+      "html": "<ul class=\"ds-sum\"><li class=\"ds-row\"><span class=\"ds-dot\" style=\"background:var(--mx-blue)\"></span><span class=\"ds-lab\">New</span><span class=\"ds-val\" style=\"color:var(--mx-blue)\">20</span></li><li class=\"ds-row ds-z\"><span class=\"ds-dot\" style=\"background:var(--mx-red)\"></span><span class=\"ds-lab\">Learning</span><span class=\"ds-val\">0</span></li><li class=\"ds-row ds-z\"><span class=\"ds-dot\" style=\"background:var(--mx-green)\"></span><span class=\"ds-lab\">To Review</span><span class=\"ds-val\">0</span></li></ul>",
+      "css": ":host{--mx-accent:#0a60ff;--mx-font:-apple-system,BlinkMacSystemFont,\"SF Pro Text\",\"Helvetica Neue\",sans-serif;--mx-ground:#f5f5f7;--mx-group:#ffffff;--mx-label:rgb(0 0 0 / 0.88);--mx-label-2:rgb(0 0 0 / 0.56);--mx-label-3:rgb(0 0 0 / 0.30);--mx-separator:rgb(0 0 0 / 0.09);--mx-fill:rgb(120 120 128 / 0.10);--mx-fill-strong:rgb(120 120 128 / 0.18);--mx-on-accent:#fff;--mx-red:#d70015;--mx-orange:#c93400;--mx-green:#1a7230;--mx-blue:#0040dd;--mx-glass:rgb(255 255 255 / 0.74);--mx-glass-hover:rgb(255 255 255 / 0.95);--mx-glass-press:rgb(232 232 236 / 0.95);--mx-glass-edge:rgb(0 0 0 / 0.08);--mx-glass-spec:rgb(255 255 255 / 0.95);--mx-glass-shadow:0 1px 2px rgb(0 0 0 / 0.06),0 4px 14px rgb(0 0 0 / 0.07);--mx-glass-shadow-lift:0 2px 4px rgb(0 0 0 / 0.07),0 10px 28px rgb(0 0 0 / 0.10);--mx-group-shadow:0 0 0 0.5px rgb(0 0 0 / 0.07),0 1px 2px rgb(0 0 0 / 0.04);font-family:var(--mx-font)} .ds-sum{max-width:460px;margin:0;padding:0;list-style:none;border-radius:12px;background:var(--mx-group);box-shadow:var(--mx-group-shadow);overflow:hidden}.ds-row{display:flex;align-items:center;gap:10px;min-height:42px;padding:0 14px;box-shadow:inset 0 -0.5px 0 var(--mx-separator);font:400 14px/1.2 var(--mx-font);color:var(--mx-label)}.ds-row:last-child{box-shadow:none}.ds-dot{width:8px;height:8px;border-radius:50%}.ds-lab{flex:1}.ds-val{font:600 15px/1 var(--mx-font);font-variant-numeric:tabular-nums}.ds-z .ds-val{color:var(--mx-label-2)}.ds-z .ds-dot{opacity:0.35}"
+    },
+    {
+      "name": "Answer Capsule: Show Answer",
+      "kind": "custom",
+      "refersTo": "answer-capsule-show",
+      "description": "Signature capsule, question state: 52px accent capsule with Space keycap and remaining counts above.",
+      "html": "<div class=\"ds-wrap\"><div class=\"ds-counts\"><span style=\"color:var(--mx-blue)\"><u>19</u></span><span style=\"color:var(--mx-red)\">1</span><span style=\"color:var(--mx-green)\">0</span></div><button class=\"ds-ans\">Show Answer<span class=\"ds-key\">Space</span></button></div>",
+      "css": ":host{--mx-accent:#0a60ff;--mx-font:-apple-system,BlinkMacSystemFont,\"SF Pro Text\",\"Helvetica Neue\",sans-serif;--mx-ground:#f5f5f7;--mx-group:#ffffff;--mx-label:rgb(0 0 0 / 0.88);--mx-label-2:rgb(0 0 0 / 0.56);--mx-label-3:rgb(0 0 0 / 0.30);--mx-separator:rgb(0 0 0 / 0.09);--mx-fill:rgb(120 120 128 / 0.10);--mx-fill-strong:rgb(120 120 128 / 0.18);--mx-on-accent:#fff;--mx-red:#d70015;--mx-orange:#c93400;--mx-green:#1a7230;--mx-blue:#0040dd;--mx-glass:rgb(255 255 255 / 0.74);--mx-glass-hover:rgb(255 255 255 / 0.95);--mx-glass-press:rgb(232 232 236 / 0.95);--mx-glass-edge:rgb(0 0 0 / 0.08);--mx-glass-spec:rgb(255 255 255 / 0.95);--mx-glass-shadow:0 1px 2px rgb(0 0 0 / 0.06),0 4px 14px rgb(0 0 0 / 0.07);--mx-glass-shadow-lift:0 2px 4px rgb(0 0 0 / 0.07),0 10px 28px rgb(0 0 0 / 0.10);--mx-group-shadow:0 0 0 0.5px rgb(0 0 0 / 0.07),0 1px 2px rgb(0 0 0 / 0.04);font-family:var(--mx-font)} .ds-key{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;box-sizing:border-box;border-radius:5px;background:var(--mx-fill);box-shadow:inset 0 -0.5px 0 var(--mx-separator);color:var(--mx-label-2);font:600 11px/1 var(--mx-font);font-variant-numeric:tabular-nums}.ds-wrap{display:inline-flex;flex-direction:column;align-items:center;gap:12px}.ds-counts{display:inline-flex;font:600 12px/1 var(--mx-font);font-variant-numeric:tabular-nums}.ds-counts span+span::before{content:'\\00b7';margin:0 7px;color:var(--mx-label-3);font-weight:400}.ds-counts u{text-decoration-thickness:1.5px;text-underline-offset:3px}.ds-ans{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:52px;min-width:300px;padding:0 24px;border:none;border-radius:999px;background:var(--mx-accent);color:var(--mx-on-accent);font:600 15px/1 var(--mx-font);letter-spacing:-0.015em;box-shadow:inset 0 0.5px 0 rgb(255 255 255 / 0.35),inset 0 -0.5px 0 rgb(0 0 0 / 0.12),var(--mx-glass-shadow-lift)}.ds-ans:hover{background:color-mix(in srgb,var(--mx-accent) 90%,white)}.ds-ans:active{background:color-mix(in srgb,var(--mx-accent) 88%,black)}.ds-ans:focus-visible{outline:none;box-shadow:0 0 0 3.5px color-mix(in srgb,var(--mx-accent) 45%,transparent),var(--mx-glass-shadow-lift)}.ds-ans .ds-key{background:rgb(255 255 255 / 0.2);box-shadow:none;color:rgb(255 255 255 / 0.9)}"
+    },
+    {
+      "name": "Answer Capsule: Grades",
+      "kind": "custom",
+      "refersTo": "answer-capsule-grades",
+      "description": "Signature capsule, answer state: 52px glass capsule of four 44px grade segments with intervals and keycaps; Good is the tinted default.",
+      "html": "<div class=\"ds-cap\"><button class=\"ds-grade\" style=\"color:var(--mx-red)\">Again<span class=\"ds-int\">&lt;1m</span><span class=\"ds-gk\">1</span></button><button class=\"ds-grade\" style=\"color:var(--mx-orange)\">Hard<span class=\"ds-int\">&lt;6m</span><span class=\"ds-gk\">2</span></button><button class=\"ds-grade ds-def\" style=\"color:var(--mx-green)\">Good<span class=\"ds-int\">&lt;10m</span><span class=\"ds-gk\">3</span></button><button class=\"ds-grade\" style=\"color:var(--mx-blue)\">Easy<span class=\"ds-int\">4d</span><span class=\"ds-gk\">4</span></button></div>",
+      "css": ":host{--mx-accent:#0a60ff;--mx-font:-apple-system,BlinkMacSystemFont,\"SF Pro Text\",\"Helvetica Neue\",sans-serif;--mx-ground:#f5f5f7;--mx-group:#ffffff;--mx-label:rgb(0 0 0 / 0.88);--mx-label-2:rgb(0 0 0 / 0.56);--mx-label-3:rgb(0 0 0 / 0.30);--mx-separator:rgb(0 0 0 / 0.09);--mx-fill:rgb(120 120 128 / 0.10);--mx-fill-strong:rgb(120 120 128 / 0.18);--mx-on-accent:#fff;--mx-red:#d70015;--mx-orange:#c93400;--mx-green:#1a7230;--mx-blue:#0040dd;--mx-glass:rgb(255 255 255 / 0.74);--mx-glass-hover:rgb(255 255 255 / 0.95);--mx-glass-press:rgb(232 232 236 / 0.95);--mx-glass-edge:rgb(0 0 0 / 0.08);--mx-glass-spec:rgb(255 255 255 / 0.95);--mx-glass-shadow:0 1px 2px rgb(0 0 0 / 0.06),0 4px 14px rgb(0 0 0 / 0.07);--mx-glass-shadow-lift:0 2px 4px rgb(0 0 0 / 0.07),0 10px 28px rgb(0 0 0 / 0.10);--mx-group-shadow:0 0 0 0.5px rgb(0 0 0 / 0.07),0 1px 2px rgb(0 0 0 / 0.04);font-family:var(--mx-font)} .ds-cap{display:inline-flex;padding:4px;border-radius:999px;background:var(--mx-glass);box-shadow:inset 0 0.5px 0 var(--mx-glass-spec),inset 0 0 0 0.5px var(--mx-glass-edge),var(--mx-glass-shadow-lift);-webkit-backdrop-filter:blur(24px) saturate(1.8);backdrop-filter:blur(24px) saturate(1.8)}.ds-grade{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:104px;height:44px;padding:0 14px 0 0;border:none;border-radius:999px;background:transparent;font:600 14px/1 var(--mx-font);letter-spacing:-0.012em;transition:background-color 120ms ease,transform 120ms ease}.ds-grade+.ds-grade::before{content:'';position:absolute;left:0;top:10px;bottom:10px;width:0.5px;background:var(--mx-separator)}.ds-def::before,.ds-def+.ds-grade::before{opacity:0}.ds-grade:hover{background:var(--mx-fill)}.ds-grade:active{background:var(--mx-fill-strong);transform:scale(0.96)}.ds-grade:focus-visible{outline:none;box-shadow:0 0 0 3.5px color-mix(in srgb,var(--mx-accent) 45%,transparent);}.ds-def{background:color-mix(in srgb,var(--mx-green) 13%,transparent)}.ds-def:hover{background:color-mix(in srgb,var(--mx-green) 19%,transparent)}.ds-int{color:var(--mx-label-2);font:500 11px/1 var(--mx-font);font-variant-numeric:tabular-nums}.ds-gk{position:absolute;top:50%;right:10px;transform:translateY(-50%);display:flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:4px;background:var(--mx-fill);box-shadow:inset 0 -0.5px 0 var(--mx-separator);color:var(--mx-label-2);font:600 10px/1 var(--mx-font);font-variant-numeric:tabular-nums}"
+    },
+    {
+      "name": "Answer Field",
+      "kind": "input",
+      "refersTo": "answer-field",
+      "description": "Type-in-the-answer field: opaque 8px surface, accent focus ring.",
+      "html": "<input class=\"ds-field\" placeholder=\"Type answer\">",
+      "css": ":host{--mx-accent:#0a60ff;--mx-font:-apple-system,BlinkMacSystemFont,\"SF Pro Text\",\"Helvetica Neue\",sans-serif;--mx-ground:#f5f5f7;--mx-group:#ffffff;--mx-label:rgb(0 0 0 / 0.88);--mx-label-2:rgb(0 0 0 / 0.56);--mx-label-3:rgb(0 0 0 / 0.30);--mx-separator:rgb(0 0 0 / 0.09);--mx-fill:rgb(120 120 128 / 0.10);--mx-fill-strong:rgb(120 120 128 / 0.18);--mx-on-accent:#fff;--mx-red:#d70015;--mx-orange:#c93400;--mx-green:#1a7230;--mx-blue:#0040dd;--mx-glass:rgb(255 255 255 / 0.74);--mx-glass-hover:rgb(255 255 255 / 0.95);--mx-glass-press:rgb(232 232 236 / 0.95);--mx-glass-edge:rgb(0 0 0 / 0.08);--mx-glass-spec:rgb(255 255 255 / 0.95);--mx-glass-shadow:0 1px 2px rgb(0 0 0 / 0.06),0 4px 14px rgb(0 0 0 / 0.07);--mx-glass-shadow-lift:0 2px 4px rgb(0 0 0 / 0.07),0 10px 28px rgb(0 0 0 / 0.10);--mx-group-shadow:0 0 0 0.5px rgb(0 0 0 / 0.07),0 1px 2px rgb(0 0 0 / 0.04);font-family:var(--mx-font)} .ds-field{width:100%;max-width:480px;box-sizing:border-box;padding:8px 12px;border:none;border-radius:8px;background:var(--mx-group);box-shadow:inset 0 0 0 0.5px var(--mx-glass-edge),var(--mx-group-shadow);color:var(--mx-label);font:400 17px/1.4 var(--mx-font)}.ds-field::placeholder{color:var(--mx-label-3)}.ds-field:focus{outline:none;box-shadow:0 0 0 3.5px color-mix(in srgb,var(--mx-accent) 45%,transparent)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Settings-Grade Study Window",
+    "overview": "Anki's main window is dressed as a first-party macOS 27 app that could sit beside Mail, Finder and System Settings. The window ground is a quiet off-white (or near-black), content lives in opaque inset grouped panels with hairline separators, and every control floats above it in Liquid Glass capsules. Nothing is decorative: depth, colour and motion all exist to say what can be pressed and what is due.\n\nThe density is Mac-native, not web-native: 13px system text, 28px capsule controls, 40 to 42px rows, a single large title per screen. Numbers are always tabular so due counts, intervals and timers line up in columns. Colour is spent almost entirely on meaning: the user's macOS accent marks the one next action and the current selection, and three state colours (new, learn, review) carry Anki's scheduling vocabulary everywhere it appears.\n\nThe system follows Anki's Light/Dark theme exactly (two complete token sets, light by default, dark under Anki's night mode) and follows the macOS accent live. It rejects Anki's stock look: a web page with a floating table and grey HTML buttons.",
+    "keyCharacteristics": [
+      "Unified 52px toolbar merged with the title bar; traffic lights centred on its midline.",
+      "Liquid Glass reserved for controls; content panels are opaque.",
+      "One accent-filled capsule per screen; everything else is quiet glass or transparent.",
+      "Capsule controls, 12px grouped panels, 8px small surfaces; nothing else.",
+      "Tabular numerals wherever a number is shown.",
+      "Every bottom control sits on one centred axis shared with the reviewer's answer capsule."
+    ],
+    "rules": [
+      {
+        "name": "The Accent Is Live Rule",
+        "body": "Accent usage always goes through the accent token, never a literal blue; the user's macOS accent must repaint every accent surface without a reload.",
+        "section": "colors"
+      },
+      {
+        "name": "The Scheduling Colour Rule",
+        "body": "Blue, red and green mean new, learn and review (plus orange for Hard) and nothing else; zero counts drop to tertiary label instead of keeping their colour.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Sets Rule",
+        "body": "Every colour token has a light and a dark value; a new surface that only works in one theme is unfinished.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Figures Rule",
+        "body": "Every number (counts, intervals, timers, keycaps, statistics) is set with tabular figures so columns align.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Large Title Rule",
+        "body": "Only the screen title uses the display weight; nothing else on the screen exceeds 15px except card content.",
+        "section": "typography"
+      },
+      {
+        "name": "The Shared Axis Rule",
+        "body": "Every screen's bottom control is horizontally centred so it shares one axis with the reviewer's answer capsule.",
+        "section": "layout"
+      },
+      {
+        "name": "The Glass Is For Controls Rule",
+        "body": "Liquid Glass (translucency, blur, specular top edge) is used only on things you can press; content panels stay opaque.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Soft Shadow Rule",
+        "body": "Shadows are soft, neutral and stacked from a tight contact shadow and a wide diffuse one; no coloured glows, no hard offsets.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Three Radii Rule",
+        "body": "Capsule for controls, 12px for groups, 8px for small surfaces; a new radius needs a reason the build already has.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "**Do** route every accent use through the accent token so the macOS accent repaints it live.",
+      "**Do** keep exactly one accent-filled capsule on a screen; demote everything else to glass or transparent capsules.",
+      "**Do** put glass only on controls, and give every glass control the full recipe: translucent fill, 0.5px specular top, 0.5px edge, soft neutral shadow.",
+      "**Do** keep the answer capsule 52px tall in both states so the morph changes width, never height.",
+      "**Do** use tabular figures for every number.",
+      "**Do** draw edges as 0.5px hairlines in the separator colour.",
+      "**Do** define both light and dark values for any new colour.",
+      "**Do** gate new motion on Anki's reduce-motion class as well as the system preference."
+    ],
+    "donts": [
+      "**Don't** hard-code a blue where the accent belongs.",
+      "**Don't** put glass, blur or translucency on content panels, cards or the window ground.",
+      "**Don't** use the state colours for anything but new, learn, review and the four grades.",
+      "**Don't** introduce radii outside capsule, 12px, 8px and the 5px keycap.",
+      "**Don't** use hard offset or coloured shadows.",
+      "**Don't** add a second filled accent action to a screen.",
+      "**Don't** recreate Anki's DOM nodes; restyle or move them so shortcuts, drag-and-drop and add-on links keep working."
+    ]
+  }
+}

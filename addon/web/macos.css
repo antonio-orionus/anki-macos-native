@@ -1,0 +1,977 @@
+/* macOS Native — Anki main window.
+   Every rule is scoped to html.mx so nothing leaks into pages the add-on
+   did not opt in. Light is the default; .night-mode is Anki's dark theme. */
+
+/* ---------------------------------------------------------------- tokens */
+
+:root { --mx-accent: #0a60ff; --mx-on-accent: #ffffff; }
+
+html.mx {
+  --mx-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  --mx-font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+  --mx-font-rounded: ui-rounded, "SF Pro Rounded", -apple-system, sans-serif;
+
+  --mx-ground: #f5f5f7;
+  --mx-bar: #ececee;
+  --mx-group: #ffffff;
+  --mx-label: rgb(0 0 0 / 0.88);
+  --mx-label-2: rgb(0 0 0 / 0.56);
+  --mx-label-3: rgb(0 0 0 / 0.30);
+  --mx-separator: rgb(0 0 0 / 0.09);
+  --mx-fill: rgb(120 120 128 / 0.10);
+  --mx-fill-strong: rgb(120 120 128 / 0.18);
+
+  /* Text-safe system colours (WCAG AA on white). */
+  --mx-red: #d70015;
+  --mx-orange: #c93400;
+  --mx-green: #1a7230;
+  --mx-blue: #0040dd;
+  --mx-yellow: #b25000;
+
+  /* Liquid Glass, as a material for controls only. */
+  --mx-glass: rgb(255 255 255 / 0.74);
+  --mx-glass-hover: rgb(255 255 255 / 0.95);
+  --mx-glass-press: rgb(232 232 236 / 0.95);
+  --mx-glass-edge: rgb(0 0 0 / 0.08);
+  --mx-glass-spec: rgb(255 255 255 / 0.95);
+  --mx-glass-shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 4px 14px rgb(0 0 0 / 0.07);
+  --mx-glass-shadow-lift: 0 2px 4px rgb(0 0 0 / 0.07), 0 10px 28px rgb(0 0 0 / 0.10);
+  --mx-group-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.07), 0 1px 2px rgb(0 0 0 / 0.04);
+
+  --mx-radius: 12px;
+  --mx-radius-sm: 8px;
+  --mx-ease: cubic-bezier(0.2, 0.9, 0.25, 1);
+
+  font-family: var(--mx-font) !important;
+  -webkit-font-smoothing: antialiased;
+  color-scheme: light;
+}
+
+html.mx.night-mode {
+  --mx-ground: #1e1e1f;
+  --mx-bar: #29292b;
+  --mx-group: #2a2a2c;
+  --mx-label: rgb(255 255 255 / 0.90);
+  --mx-label-2: rgb(235 235 245 / 0.60);
+  --mx-label-3: rgb(235 235 245 / 0.30);
+  --mx-separator: rgb(255 255 255 / 0.09);
+  --mx-fill: rgb(120 120 128 / 0.20);
+  --mx-fill-strong: rgb(120 120 128 / 0.32);
+
+  --mx-red: #ff6961;
+  --mx-orange: #ffb340;
+  --mx-green: #30db5b;
+  --mx-blue: #409cff;
+  --mx-yellow: #ffd426;
+
+  --mx-glass: rgb(255 255 255 / 0.08);
+  --mx-glass-hover: rgb(255 255 255 / 0.13);
+  --mx-glass-press: rgb(255 255 255 / 0.05);
+  --mx-glass-edge: rgb(255 255 255 / 0.07);
+  --mx-glass-spec: rgb(255 255 255 / 0.16);
+  --mx-glass-shadow: 0 1px 2px rgb(0 0 0 / 0.30), 0 4px 14px rgb(0 0 0 / 0.28);
+  --mx-glass-shadow-lift: 0 2px 4px rgb(0 0 0 / 0.35), 0 10px 28px rgb(0 0 0 / 0.40);
+  --mx-group-shadow: 0 0 0 0.5px rgb(255 255 255 / 0.06), 0 1px 2px rgb(0 0 0 / 0.25);
+  color-scheme: dark;
+}
+
+/* Anki's own variables, mapped so stock widgets on these pages agree. */
+html.mx, html.mx.night-mode {
+  --canvas: var(--mx-ground);
+  --fg: var(--mx-label);
+  --fg-subtle: var(--mx-label-2);
+  --fg-faint: var(--mx-label-3);
+  --state-new: var(--mx-blue);
+  --state-learn: var(--mx-red);
+  --state-review: var(--mx-green);
+  --border-focus: var(--mx-accent);
+}
+
+html.mx body {
+  background: var(--mx-ground) !important;
+  color: var(--mx-label);
+  font-family: var(--mx-font) !important;
+  font-size: 13px;
+  line-height: 1.38;
+  letter-spacing: -0.003em;
+}
+
+html.mx ::selection {
+  background: color-mix(in srgb, var(--mx-accent) 30%, transparent);
+}
+
+html.mx :focus { outline: none; }
+html.mx :focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3.5px color-mix(in srgb, var(--mx-accent) 45%, transparent) !important;
+}
+
+/* ----------------------------------------------------- icons (Lucide, ISC) */
+
+.mx-icon {
+  display: inline-block;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  vertical-align: middle;
+}
+
+/* ------------------------------------------------- glass control family */
+
+html.mx .mx-glass,
+html.mx .mx-group {
+  background: var(--mx-glass);
+  border: none !important;
+  border-radius: 999px;
+  box-shadow:
+    inset 0 0.5px 0 var(--mx-glass-spec),
+    inset 0 0 0 0.5px var(--mx-glass-edge),
+    var(--mx-glass-shadow);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  backdrop-filter: blur(24px) saturate(1.8);
+}
+
+html.mx .mx-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  padding: 3px;
+}
+
+/* A capsule button that lives inside a group, or alone. */
+html.mx .mx-btn {
+  -webkit-appearance: none;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 28px;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 0 12px !important;
+  border: none !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--mx-label) !important;
+  font: 500 13px/1 var(--mx-font) !important;
+  letter-spacing: -0.01em;
+  text-decoration: none !important;
+  white-space: nowrap;
+  cursor: default;
+  transition: background-color 120ms ease, transform 120ms ease;
+}
+html.mx .mx-btn:hover { background: var(--mx-fill) !important; }
+html.mx .mx-btn:active { background: var(--mx-fill-strong) !important; transform: scale(0.97); }
+html.mx .mx-btn .mx-icon { color: var(--mx-label-2); }
+html.mx .mx-btn:hover .mx-icon { color: var(--mx-label); }
+
+/* Hairline between neighbours, like a segmented control. */
+html.mx .mx-group > .mx-btn + .mx-btn { position: relative; }
+html.mx .mx-group > .mx-btn + .mx-btn::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 0.5px;
+  background: var(--mx-separator);
+  transition: opacity 120ms ease;
+}
+html.mx .mx-group > .mx-btn:hover::before,
+html.mx .mx-group > .mx-btn:hover + .mx-btn::before { opacity: 0; }
+
+/* Icon-only round glass button. */
+html.mx .mx-round {
+  width: 34px !important;
+  height: 34px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  background: var(--mx-glass) !important;
+  box-shadow:
+    inset 0 0.5px 0 var(--mx-glass-spec),
+    inset 0 0 0 0.5px var(--mx-glass-edge),
+    var(--mx-glass-shadow) !important;
+}
+html.mx .mx-round:hover { background: var(--mx-glass-hover) !important; }
+html.mx .mx-round:active { background: var(--mx-glass-press) !important; }
+html.mx .mx-round .mx-icon { width: 17px; height: 17px; color: var(--mx-label); }
+
+/* The one prominent action on a screen. */
+html.mx .mx-prominent {
+  height: 40px !important;
+  min-width: 240px;
+  padding: 0 22px !important;
+  border-radius: 999px !important;
+  background: var(--mx-accent) !important;
+  color: var(--mx-on-accent) !important;
+  font: 600 15px/1 var(--mx-font) !important;
+  letter-spacing: -0.015em;
+  box-shadow:
+    inset 0 0.5px 0 rgb(255 255 255 / 0.35),
+    inset 0 -0.5px 0 rgb(0 0 0 / 0.12),
+    var(--mx-glass-shadow-lift) !important;
+}
+html.mx .mx-prominent:hover {
+  background: color-mix(in srgb, var(--mx-accent) 90%, white) !important;
+}
+html.mx .mx-prominent:active {
+  background: color-mix(in srgb, var(--mx-accent) 88%, black) !important;
+}
+
+/* Count badge: a capsule tinted by its state colour; zero is quiet. */
+html.mx .mx-badge,
+html.mx[data-mx="deckbrowser"] td .new-count,
+html.mx[data-mx="deckbrowser"] td .learn-count,
+html.mx[data-mx="deckbrowser"] td .review-count {
+  display: inline-block;
+  min-width: 26px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font: 600 12px/16px var(--mx-font);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  box-sizing: border-box;
+}
+html.mx[data-mx="deckbrowser"] td .new-count { color: var(--mx-blue); background: color-mix(in srgb, var(--mx-blue) 12%, transparent); }
+html.mx[data-mx="deckbrowser"] td .learn-count { color: var(--mx-red); background: color-mix(in srgb, var(--mx-red) 12%, transparent); }
+html.mx[data-mx="deckbrowser"] td .review-count { color: var(--mx-green); background: color-mix(in srgb, var(--mx-green) 12%, transparent); }
+html.mx .zero-count {
+  display: inline-block;
+  min-width: 26px;
+  color: var(--mx-label-2) !important;
+  font: 500 12px/16px var(--mx-font);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* Large title, as in Mail, Notes and System Settings. */
+html.mx .mx-title {
+  margin: 0;
+  font: 700 26px/1.15 var(--mx-font-display);
+  letter-spacing: -0.022em;
+  color: var(--mx-label);
+  text-wrap: balance;
+}
+html.mx .mx-subtitle {
+  margin: 4px 0 0;
+  font: 400 13px/1.35 var(--mx-font);
+  color: var(--mx-label-2);
+}
+
+/* ================================================================ toolbar */
+
+html.mx[data-mx="toolbar"] body {
+  background: var(--mx-bar) !important;
+  margin: 0 !important;
+  overflow: hidden;
+}
+html.mx[data-mx="toolbar"] .header {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 16px;
+  box-sizing: border-box;
+  border-bottom: 0.5px solid var(--mx-separator);
+}
+html.mx.night-mode[data-mx="toolbar"] .header {
+  border-bottom-color: rgb(0 0 0 / 0.55);
+}
+html.mx.mx-unified[data-mx="toolbar"] .header { padding-left: 84px; }
+
+html.mx[data-mx="toolbar"] .left-tray,
+html.mx[data-mx="toolbar"] .right-tray {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+html.mx[data-mx="toolbar"] .right-tray { justify-content: flex-end; }
+
+html.mx[data-mx="toolbar"] .toolbar {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  background: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+}
+
+/* Every toolbar link, ours or another add-on's, becomes a capsule button. */
+html.mx[data-mx="toolbar"] .hitem {
+  -webkit-appearance: none;
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px !important;
+  border: none !important;
+  border-radius: 999px;
+  background: transparent !important;
+  color: var(--mx-label) !important;
+  font: 500 13px/1 var(--mx-font) !important;
+  letter-spacing: -0.01em;
+  text-decoration: none !important;
+  cursor: default;
+  transition: background-color 120ms ease, transform 120ms ease;
+}
+html.mx[data-mx="toolbar"] .hitem:hover { background: var(--mx-fill) !important; }
+html.mx[data-mx="toolbar"] .hitem:active { background: var(--mx-fill-strong) !important; transform: scale(0.97); }
+html.mx[data-mx="toolbar"] .hitem .mx-icon { color: var(--mx-label-2); }
+html.mx[data-mx="toolbar"] .hitem.mx-current { background: var(--mx-fill-strong) !important; }
+html.mx[data-mx="toolbar"] .hitem.mx-current .mx-icon { color: var(--mx-accent); }
+
+/* Links outside a group (other add-ons) carry their own glass. */
+html.mx[data-mx="toolbar"] .toolbar > .hitem {
+  height: 34px;
+  background: var(--mx-glass) !important;
+  box-shadow:
+    inset 0 0.5px 0 var(--mx-glass-spec),
+    inset 0 0 0 0.5px var(--mx-glass-edge),
+    var(--mx-glass-shadow);
+}
+html.mx[data-mx="toolbar"] .toolbar > .hitem:hover { background: var(--mx-glass-hover) !important; }
+
+/* Sync: Anki's spinner image gives way to our icon, which spins instead. */
+html.mx[data-mx="toolbar"] #sync-spinner { display: none !important; }
+html.mx[data-mx="toolbar"] #sync.normal-sync .mx-icon { color: var(--mx-blue) !important; }
+html.mx[data-mx="toolbar"] #sync.full-sync .mx-icon { color: var(--mx-red) !important; }
+html.mx[data-mx="toolbar"] #sync.normal-sync,
+html.mx[data-mx="toolbar"] #sync.full-sync { color: var(--mx-label) !important; }
+html.mx[data-mx="toolbar"] #sync.normal-sync::after,
+html.mx[data-mx="toolbar"] #sync.full-sync::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  margin-left: 2px;
+  border-radius: 50%;
+  background: var(--mx-blue);
+}
+html.mx[data-mx="toolbar"] #sync.full-sync::after { background: var(--mx-red); }
+html.mx[data-mx="toolbar"] #sync:has(#sync-spinner.spin) .mx-icon {
+  animation: mx-spin 1s linear infinite;
+}
+@keyframes mx-spin { to { transform: rotate(360deg); } }
+
+/* ============================================================ deck browser */
+
+html.mx[data-mx="deckbrowser"] body {
+  margin: 0 !important;
+  padding: 28px 24px 40px;
+}
+html.mx[data-mx="deckbrowser"] center {
+  display: block;
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: start;
+}
+html.mx[data-mx="deckbrowser"] .mx-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 18px;
+}
+
+html.mx[data-mx="deckbrowser"] table {
+  width: 100%;
+  padding: 0 !important;
+  border: none !important;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/* Column labels sit above the group, not inside it. */
+html.mx[data-mx="deckbrowser"] th {
+  padding: 0 12px 6px !important;
+  border: none !important;
+  font: 500 11px/1.2 var(--mx-font);
+  color: var(--mx-label-2);
+  text-align: start;
+}
+html.mx[data-mx="deckbrowser"] th:first-child { padding-inline-start: 34px !important; }
+html.mx[data-mx="deckbrowser"] th.count { text-align: center; width: 64px; min-width: 0; }
+html.mx[data-mx="deckbrowser"] th.optscol { width: 44px; }
+
+html.mx[data-mx="deckbrowser"] tr.top-level-drag-row td {
+  height: 2px;
+  padding: 0 !important;
+  font-size: 0;
+  line-height: 0;
+}
+
+/* The grouped list. */
+html.mx[data-mx="deckbrowser"] tr.deck td {
+  height: 40px;
+  padding: 0 12px !important;
+  background: var(--mx-group) !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: inset 0 -0.5px 0 var(--mx-separator);
+  vertical-align: middle;
+  transition: background-color 100ms ease;
+}
+html.mx[data-mx="deckbrowser"] tr.deck td[align="end"],
+html.mx[data-mx="deckbrowser"] tr.deck td[align="right"] { text-align: center; padding: 0 4px !important; }
+html.mx[data-mx="deckbrowser"] tr.deck.mx-last td { box-shadow: none; }
+html.mx[data-mx="deckbrowser"] tr.deck.mx-first td:first-child { border-top-left-radius: var(--mx-radius) !important; }
+html.mx[data-mx="deckbrowser"] tr.deck.mx-first td:last-child { border-top-right-radius: var(--mx-radius) !important; }
+html.mx[data-mx="deckbrowser"] tr.deck.mx-last td:first-child { border-bottom-left-radius: var(--mx-radius) !important; }
+html.mx[data-mx="deckbrowser"] tr.deck.mx-last td:last-child { border-bottom-right-radius: var(--mx-radius) !important; }
+html.mx[data-mx="deckbrowser"] tbody { filter: drop-shadow(0 0.5px 0 var(--mx-separator)) drop-shadow(0 1px 1.5px rgb(0 0 0 / 0.05)); }
+html.mx.night-mode[data-mx="deckbrowser"] tbody { filter: drop-shadow(0 1px 1.5px rgb(0 0 0 / 0.35)); }
+
+html.mx[data-mx="deckbrowser"] tr.deck:hover td { background: color-mix(in srgb, var(--mx-group), var(--mx-label) 4%) !important; }
+html.mx[data-mx="deckbrowser"] tr.deck.current td {
+  background: color-mix(in srgb, var(--mx-group), var(--mx-accent) 13%) !important;
+}
+html.mx[data-mx="deckbrowser"] tr.drag-hover td { box-shadow: inset 0 -2px 0 var(--mx-accent) !important; }
+
+html.mx[data-mx="deckbrowser"] .decktd {
+  min-width: 0;
+  max-width: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+html.mx[data-mx="deckbrowser"] a.deck {
+  min-width: 0;
+  color: var(--mx-label) !important;
+  font: 500 14px/1.2 var(--mx-font);
+  letter-spacing: -0.012em;
+  text-decoration: none !important;
+  cursor: default;
+}
+html.mx[data-mx="deckbrowser"] a.deck.filtered { color: var(--mx-accent) !important; }
+
+/* Disclosure chevron replaces Anki's +/-. */
+html.mx[data-mx="deckbrowser"] .collapse {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin-inline-end: 4px;
+  vertical-align: -3px;
+  color: var(--mx-label-2) !important;
+  font-size: 0 !important;
+  text-decoration: none !important;
+  border-radius: 5px;
+}
+html.mx[data-mx="deckbrowser"] a.collapse:hover { background: var(--mx-fill); color: var(--mx-label) !important; }
+html.mx[data-mx="deckbrowser"] .collapse .mx-icon {
+  width: 13px;
+  height: 13px;
+  stroke-width: 2.25;
+  transition: transform 160ms var(--mx-ease);
+}
+html.mx[data-mx="deckbrowser"] .collapse.mx-open .mx-icon { transform: rotate(90deg); }
+
+/* Options: an ellipsis that is always findable, louder on hover. */
+html.mx[data-mx="deckbrowser"] td.opts { padding: 0 8px !important; }
+html.mx[data-mx="deckbrowser"] td.opts a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  color: var(--mx-label-3);
+  cursor: default;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+html.mx[data-mx="deckbrowser"] tr.deck:hover td.opts a,
+html.mx[data-mx="deckbrowser"] tr.deck.current td.opts a { color: var(--mx-label-2); }
+html.mx[data-mx="deckbrowser"] td.opts a:hover { background: var(--mx-fill); color: var(--mx-label) !important; }
+html.mx[data-mx="deckbrowser"] td.opts .gears { display: none !important; }
+
+html.mx[data-mx="deckbrowser"] center > br { display: none; }
+html.mx[data-mx="deckbrowser"] #studiedToday {
+  margin: 10px 0 0 34px !important;
+  color: var(--mx-label-2);
+  font: 400 12px/1.4 var(--mx-font);
+  font-variant-numeric: tabular-nums;
+  text-align: start;
+}
+
+html.mx[data-mx="deckbrowser"] .callout {
+  margin: 0 0 16px;
+  padding: 14px 16px;
+  border-radius: var(--mx-radius);
+  background: var(--mx-group);
+  box-shadow: var(--mx-group-shadow);
+  color: var(--mx-label);
+}
+
+/* =============================================================== overview */
+
+html.mx[data-mx="overview"] body {
+  margin: 0 !important;
+  padding: 40px 24px;
+}
+html.mx[data-mx="overview"] .mx-overview {
+  max-width: 460px;
+  margin: 6vh auto 0;
+  text-align: start;
+}
+html.mx[data-mx="overview"] .mx-overview .mx-title { margin: 0 4px; }
+html.mx[data-mx="overview"] .mx-desc {
+  margin: 8px 4px 0;
+  color: var(--mx-label-2);
+  font: 400 13px/1.45 var(--mx-font);
+  max-width: 65ch;
+}
+html.mx[data-mx="overview"] .mx-desc:empty { display: none; }
+html.mx[data-mx="overview"] .mx-desc .descfont { padding: 0; color: inherit; }
+html.mx[data-mx="overview"] .mx-desc .descmid { width: auto; margin: 0; }
+
+html.mx .mx-list {
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+  border-radius: var(--mx-radius);
+  background: var(--mx-group);
+  box-shadow: var(--mx-group-shadow);
+  overflow: hidden;
+}
+html.mx .mx-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 0 14px;
+  box-shadow: inset 0 -0.5px 0 var(--mx-separator);
+  font: 400 14px/1.2 var(--mx-font);
+  color: var(--mx-label);
+}
+html.mx .mx-row:last-child { box-shadow: none; }
+html.mx .mx-row .mx-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+html.mx .mx-row .mx-label { flex: 1; }
+html.mx .mx-row .mx-value {
+  font: 600 15px/1 var(--mx-font);
+  font-variant-numeric: tabular-nums;
+}
+html.mx .mx-row .mx-value .bury-count { font-weight: 500; color: var(--mx-label-3); }
+html.mx .mx-row.mx-new .mx-dot { background: var(--mx-blue); }
+html.mx .mx-row.mx-learn .mx-dot { background: var(--mx-red); }
+html.mx .mx-row.mx-review .mx-dot { background: var(--mx-green); }
+html.mx .mx-row.mx-new .mx-value { color: var(--mx-blue); }
+html.mx .mx-row.mx-learn .mx-value { color: var(--mx-red); }
+html.mx .mx-row.mx-review .mx-value { color: var(--mx-green); }
+html.mx .mx-row .mx-value span { color: inherit !important; }
+html.mx .mx-row .mx-value .bury-count { color: var(--mx-label-3) !important; }
+html.mx .mx-row.mx-zero .mx-value { color: var(--mx-label-2); font-weight: 500; }
+html.mx .mx-row.mx-zero .mx-dot { opacity: 0.35; }
+
+html.mx[data-mx="overview"] .mx-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 28px;
+}
+html.mx[data-mx="overview"] .mx-action .mx-prominent { width: 100%; box-sizing: border-box; }
+html.mx[data-mx="overview"] .mx-hint {
+  color: var(--mx-label-2);
+  font: 400 12px/1 var(--mx-font);
+}
+
+html.mx kbd, html.mx .mx-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  background: var(--mx-fill);
+  box-shadow: inset 0 -0.5px 0 var(--mx-separator);
+  color: var(--mx-label-2);
+  font: 600 11px/1 var(--mx-font);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Finished-deck and other overview variants keep their own structure. */
+html.mx[data-mx="overview"] center:not(.mx-done) h3 {
+  font: 700 26px/1.15 var(--mx-font-display);
+  letter-spacing: -0.022em;
+}
+html.mx[data-mx="overview"] a { color: var(--mx-accent); text-decoration: none; }
+html.mx[data-mx="overview"] a:hover { text-decoration: underline; text-underline-offset: 2px; }
+
+/* ============================================================ bottom bars */
+
+html.mx[data-mx$="-bottom"] body,
+html.mx[data-mx="bottom"] body {
+  background: var(--mx-ground) !important;
+  margin: 0 !important;
+}
+html.mx[data-mx$="-bottom"] #outer,
+html.mx[data-mx="bottom"] #outer {
+  border-top: none !important;
+}
+html.mx[data-mx="deckbrowser-bottom"] #header,
+html.mx[data-mx="overview-bottom"] #header {
+  padding: 8px 16px 14px !important;
+  border: none !important;
+}
+html.mx[data-mx="deckbrowser-bottom"] #header td,
+html.mx[data-mx="overview-bottom"] #header td { padding: 0; }
+
+/* =============================================================== reviewer */
+
+html.mx[data-mx="reviewer"] body {
+  margin: 0 !important;
+  padding: 7vh 32px 48px;
+}
+html.mx.mx-unified[data-mx="reviewer"] body { padding-top: max(7vh, 44px); }
+
+html.mx.mx-cards[data-mx="reviewer"] body.card {
+  background: var(--mx-ground) !important;
+  color: var(--mx-label) !important;
+  font-family: var(--mx-font) !important;
+  font-size: 21px !important;
+  line-height: 1.5 !important;
+  letter-spacing: -0.012em;
+}
+html.mx.mx-cards[data-mx="reviewer"] .card { background: transparent !important; color: inherit !important; font-family: inherit !important; }
+html.mx[data-mx="reviewer"] #qa {
+  max-width: 680px;
+  margin: 0 auto;
+  text-wrap: balance;
+}
+html.mx[data-mx="reviewer"] #qa b,
+html.mx[data-mx="reviewer"] #qa strong { font-weight: 650; }
+html.mx[data-mx="reviewer"] hr,
+html.mx[data-mx="reviewer"] hr#answer {
+  height: 0.5px;
+  margin: 28px auto;
+  border: none;
+  background: var(--mx-separator) !important;
+  box-shadow: 0 0.5px 0 var(--mx-separator);
+}
+html.mx[data-mx="reviewer"] #qa img { border-radius: var(--mx-radius-sm); }
+html.mx[data-mx="reviewer"] #qa a { color: var(--mx-accent); }
+
+html.mx[data-mx="reviewer"] #typeans {
+  max-width: 480px;
+  margin: 12px auto 0;
+  display: block;
+  padding: 8px 12px;
+  border: none;
+  border-radius: var(--mx-radius-sm);
+  background: var(--mx-group);
+  box-shadow: inset 0 0 0 0.5px var(--mx-glass-edge), var(--mx-group-shadow);
+  color: var(--mx-label);
+  font: 400 17px/1.4 var(--mx-font);
+}
+html.mx[data-mx="reviewer"] #typeans:focus {
+  box-shadow: 0 0 0 3.5px color-mix(in srgb, var(--mx-accent) 45%, transparent);
+}
+html.mx[data-mx="reviewer"] .typeGood { background: color-mix(in srgb, var(--mx-green) 22%, transparent); color: inherit; }
+html.mx[data-mx="reviewer"] .typeBad { background: color-mix(in srgb, var(--mx-red) 22%, transparent); color: inherit; }
+html.mx[data-mx="reviewer"] .typeMissed { background: var(--mx-fill-strong); color: inherit; }
+
+html.mx[data-mx="reviewer"] .replay-button svg { width: 34px; height: 34px; }
+html.mx[data-mx="reviewer"] .replay-button svg circle {
+  fill: var(--mx-glass);
+  stroke: var(--mx-glass-edge);
+}
+html.mx[data-mx="reviewer"] .replay-button svg path { fill: var(--mx-label); }
+
+/* Mark and flag become small glass badges in the top corners. */
+html.mx[data-mx="reviewer"] #_mark,
+html.mx[data-mx="reviewer"] #_flag {
+  top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 15px;
+  line-height: 1;
+  -webkit-text-stroke-width: 0;
+  background: var(--mx-glass);
+  box-shadow:
+    inset 0 0.5px 0 var(--mx-glass-spec),
+    inset 0 0 0 0.5px var(--mx-glass-edge),
+    var(--mx-glass-shadow);
+}
+html.mx[data-mx="reviewer"] #_mark[hidden],
+html.mx[data-mx="reviewer"] #_flag[hidden] { display: none; }
+html.mx[data-mx="reviewer"] #_mark,
+html.mx[data-mx="reviewer"] #_flag { font-size: 0 !important; }
+html.mx[data-mx="reviewer"] #_mark::before,
+html.mx[data-mx="reviewer"] #_flag::before {
+  content: "";
+  width: 15px;
+  height: 15px;
+  background: currentColor;
+  -webkit-mask: var(--mx-glyph) center / contain no-repeat;
+  mask: var(--mx-glyph) center / contain no-repeat;
+}
+html.mx[data-mx="reviewer"] #_mark {
+  color: #e6a700;
+  left: 14px;
+  --mx-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M11.5 2.3a.6.6 0 0 1 1 0l2.6 5.3 5.8.9a.6.6 0 0 1 .3 1l-4.2 4.1 1 5.8a.6.6 0 0 1-.9.6L12 17.3 6.9 20a.6.6 0 0 1-.9-.6l1-5.8-4.2-4.1a.6.6 0 0 1 .3-1l5.8-.9z'/%3E%3C/svg%3E");
+}
+html.mx[data-mx="reviewer"] #_flag {
+  right: 14px;
+  --mx-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 2.5a1 1 0 0 1 1 1v.6c1.3-.6 2.7-.9 4-.6 1.6.3 2.6 1.1 4 1.3 1.3.2 2.6-.1 4-.8a1 1 0 0 1 1.4.9v9.2a1 1 0 0 1-.5.9c-1.7 1-3.4 1.4-5.1 1.1-1.6-.3-2.6-1.1-4-1.3-1.2-.2-2.5.1-3.8.7v5.9a1 1 0 0 1-2 0V3.5a1 1 0 0 1 1-1z'/%3E%3C/svg%3E");
+}
+
+/* ===================================================== reviewer answer bar */
+
+html.mx[data-mx="reviewer-bottom"] body { overflow: hidden; }
+html.mx[data-mx="reviewer-bottom"] #innertable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+/* One row, everything centred on the capsule's midline. */
+html.mx[data-mx="reviewer-bottom"] #innertable > tbody { display: block; }
+html.mx[data-mx="reviewer-bottom"] #innertable > tbody > tr {
+  display: flex;
+  align-items: center;
+  padding: 28px 16px 16px;
+}
+html.mx[data-mx="reviewer-bottom"] #innertable > tbody > tr > td {
+  display: block;
+  padding: 0 !important;
+}
+html.mx[data-mx="reviewer-bottom"] #innertable > tbody > tr > td.stat { flex: 0 0 120px; }
+html.mx[data-mx="reviewer-bottom"] #innertable > tbody > tr > td.stat:last-child { text-align: end; }
+html.mx[data-mx="reviewer-bottom"] #middle { flex: 1 1 auto; min-width: 0; }
+
+/* Side buttons: round glass, icon only (tooltips keep the shortcut). */
+html.mx[data-mx="reviewer-bottom"] td.stat button {
+  position: relative;
+  font-size: 0 !important;
+}
+html.mx[data-mx="reviewer-bottom"] td.stat button .mx-icon { font-size: 13px; }
+html.mx[data-mx="reviewer-bottom"] td.stat .stattxt,
+html.mx[data-mx="reviewer-bottom"] #time {
+  position: absolute;
+  top: auto !important;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) !important;
+  color: var(--mx-label-2) !important;
+  font: 500 12px/1 var(--mx-font) !important;
+  font-variant-numeric: tabular-nums;
+}
+html.mx[data-mx="reviewer-bottom"] #time font { color: var(--mx-red); }
+
+/* The capsule: one glass shape that holds either Show Answer or the grades. */
+html.mx[data-mx="reviewer-bottom"] .mx-capsule {
+  display: inline-flex !important;
+  align-items: stretch;
+  margin: 0 auto;
+  padding: 4px;
+  border-radius: 999px;
+  border-spacing: 0;
+  background: var(--mx-glass);
+  box-shadow:
+    inset 0 0.5px 0 var(--mx-glass-spec),
+    inset 0 0 0 0.5px var(--mx-glass-edge),
+    var(--mx-glass-shadow-lift);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  backdrop-filter: blur(24px) saturate(1.8);
+  overflow: hidden;
+  vertical-align: bottom;
+}
+html.mx[data-mx="reviewer-bottom"] .mx-capsule > tbody,
+html.mx[data-mx="reviewer-bottom"] .mx-capsule > tbody > tr { display: contents; }
+html.mx[data-mx="reviewer-bottom"] .mx-capsule td {
+  display: block;
+  padding: 0 !important;
+  position: static !important;
+}
+html.mx[data-mx="reviewer-bottom"] #middle > center,
+html.mx[data-mx="reviewer-bottom"] #middle { text-align: center; }
+
+/* Show Answer */
+html.mx[data-mx="reviewer-bottom"] .mx-capsule:has(#ansbut) {
+  padding: 0;
+  background: var(--mx-accent);
+  box-shadow:
+    inset 0 0.5px 0 rgb(255 255 255 / 0.35),
+    inset 0 -0.5px 0 rgb(0 0 0 / 0.12),
+    var(--mx-glass-shadow-lift);
+}
+html.mx[data-mx="reviewer-bottom"] #ansbut {
+  -webkit-appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 52px;
+  min-width: 300px;
+  margin: 0 !important;
+  padding: 0 24px !important;
+  border: none !important;
+  border-radius: 999px !important;
+  background: var(--mx-accent) !important;
+  box-shadow:
+    inset 0 0.5px 0 rgb(255 255 255 / 0.35),
+    inset 0 -0.5px 0 rgb(0 0 0 / 0.12) !important;
+  color: var(--mx-on-accent) !important;
+  font: 600 15px/1 var(--mx-font) !important;
+  letter-spacing: -0.015em;
+  cursor: default;
+}
+html.mx[data-mx="reviewer-bottom"] #ansbut:hover { background: color-mix(in srgb, var(--mx-accent) 90%, white) !important; }
+html.mx[data-mx="reviewer-bottom"] #ansbut:active { background: color-mix(in srgb, var(--mx-accent) 88%, black) !important; }
+html.mx[data-mx="reviewer-bottom"] #ansbut .mx-key {
+  background: color-mix(in srgb, var(--mx-on-accent) 20%, transparent);
+  box-shadow: none;
+  color: var(--mx-on-accent);
+}
+
+/* Remaining counts sit above the capsule: 19 · 1 · 0, current underlined. */
+html.mx[data-mx="reviewer-bottom"] #ansbut .stattxt {
+  position: absolute;
+  top: auto !important;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%) !important;
+  display: inline-flex;
+  gap: 0;
+  font-size: 0 !important;
+  font-weight: 600;
+}
+html.mx[data-mx="reviewer-bottom"] #middle td.stat2 { position: relative !important; }
+html.mx[data-mx="reviewer-bottom"] .mx-capsule:has(#ansbut) { overflow: visible; }
+html.mx[data-mx="reviewer-bottom"] #ansbut .stattxt > span {
+  font: 600 12px/1 var(--mx-font);
+  font-variant-numeric: tabular-nums;
+}
+html.mx[data-mx="reviewer-bottom"] #ansbut .stattxt > span + span::before {
+  content: "·";
+  margin: 0 7px;
+  color: var(--mx-label-3);
+  font-weight: 400;
+}
+html.mx[data-mx="reviewer-bottom"] #ansbut .stattxt u {
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+html.mx[data-mx="reviewer-bottom"] .new-count { color: var(--mx-blue); }
+html.mx[data-mx="reviewer-bottom"] .learn-count { color: var(--mx-red); }
+html.mx[data-mx="reviewer-bottom"] .review-count { color: var(--mx-green); }
+
+/* Grades: four segments, label over interval, keycap in the corner. */
+html.mx[data-mx="reviewer-bottom"] button[data-ease] {
+  -webkit-appearance: none;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 104px;
+  height: 44px;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font: 600 14px/1 var(--mx-font) !important;
+  letter-spacing: -0.012em;
+  cursor: default;
+  transition: background-color 120ms ease, transform 120ms ease;
+}
+html.mx[data-mx="reviewer-bottom"] button[data-ease]:hover { background: var(--mx-fill) !important; }
+html.mx[data-mx="reviewer-bottom"] button[data-ease]:active { background: var(--mx-fill-strong) !important; transform: scale(0.96); }
+html.mx[data-mx="reviewer-bottom"] button[data-ease="1"] { color: var(--mx-red) !important; }
+html.mx[data-mx="reviewer-bottom"] button[data-ease="2"] { color: var(--mx-orange) !important; }
+html.mx[data-mx="reviewer-bottom"] button[data-ease="3"] { color: var(--mx-green) !important; }
+html.mx[data-mx="reviewer-bottom"] button[data-ease="4"] { color: var(--mx-blue) !important; }
+html.mx[data-mx="reviewer-bottom"] #defease {
+  background: color-mix(in srgb, var(--mx-green) 13%, transparent) !important;
+}
+html.mx[data-mx="reviewer-bottom"] #defease:hover {
+  background: color-mix(in srgb, var(--mx-green) 19%, transparent) !important;
+}
+html.mx[data-mx="reviewer-bottom"] button[data-ease] .nobold {
+  position: static !important;
+  transform: none !important;
+  display: block;
+  color: var(--mx-label-2);
+  font: 500 11px/1 var(--mx-font);
+  font-variant-numeric: tabular-nums;
+}
+html.mx[data-mx="reviewer-bottom"] button[data-ease]::after {
+  content: attr(data-ease);
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  background: var(--mx-fill);
+  box-shadow: inset 0 -0.5px 0 var(--mx-separator);
+  color: var(--mx-label-2);
+  font: 600 10px/1 var(--mx-font);
+  font-variant-numeric: tabular-nums;
+}
+html.mx[data-mx="reviewer-bottom"] button[data-ease] { padding-right: 14px !important; }
+/* Hairlines between segments, hidden next to the tinted default. */
+html.mx[data-mx="reviewer-bottom"] .mx-capsule td + td { position: relative !important; }
+html.mx[data-mx="reviewer-bottom"] .mx-capsule td + td::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 0.5px;
+  background: var(--mx-separator);
+}
+html.mx[data-mx="reviewer-bottom"] .mx-capsule td:has(#defease)::before,
+html.mx[data-mx="reviewer-bottom"] .mx-capsule td:has(#defease) + td::before { opacity: 0; }
+
+@media (max-width: 640px) {
+  html.mx[data-mx="reviewer-bottom"] button[data-ease] { width: 80px; }
+  html.mx[data-mx="reviewer-bottom"] #ansbut { min-width: 220px; }
+}
+
+/* ================================================================= motion */
+
+html.mx body:not(.reduce-motion) .mx-enter {
+  animation: mx-enter 320ms var(--mx-ease) both;
+}
+@keyframes mx-enter {
+  from { opacity: 0; transform: translateY(6px); filter: blur(3px); }
+}
+/* Anki's own Reduce motion setting, and the system one. Progress (the
+   sync spinner) keeps moving; everything decorative stops. */
+html.mx body.reduce-motion *:not(.mx-icon) { transition: none !important; }
+html.mx body.reduce-motion .mx-enter { animation: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  html.mx *:not(.mx-icon) { animation: none !important; transition: none !important; }
+}

@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.DS_Store
+dist/
+addon/meta.json
+.impeccable/review/
+.impeccable/mocks/
+.impeccable/build/
+.impeccable/questions/
+.impeccable/config.local.json
