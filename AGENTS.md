@@ -14,6 +14,8 @@ An Anki add-on (Anki 26.x, PyQt6 / QtWebEngine, macOS) that restyles the main wi
 
 - `addon/` is the add-on itself; it gets packaged.
   - `__init__.py`: hooks, screen detection, accent and on-accent injection, settings. SvelteKit pages (deck options) are styled from `webview_did_inject_style_into_page` by URL path (`SVELTE_PAGES`).
+  - `menus.py`: macOS-style Qt popup menus. `QMenu.__init__` is wrapped so every menu created from Python gets the current theme's QSS and a translucent window. Attaching it per menu avoids depending on when Anki applies its app-wide stylesheet; a `style_did_init` hook was tried and never reached the deck menu.
+  - `quiet.py`: `MX_QUIET=1` launches. Anki's startup `activateWindow()` / `raise_()` calls are suppressed for 15 s so the screenshot script's relaunches don't take focus.
   - `titlebar.py`: unified title bar (Qt `ExpandedClientAreaHint`), traffic-light centring and window drag/zoom on empty toolbar space. Uses AppKit through `ctypes` `objc_msgSend`, with no PyObjC.
   - `web/macos.css`: the entire visual design, scoped to `html.mx[data-mx="<screen>"]`.
   - `web/macos.js`: DOM enhancement (icons, groups, the overview restructure, the answer-capsule morph, the whole-row deck click).
@@ -39,6 +41,7 @@ On SvelteKit pages, style by Anki's stable component classes (`.deck-options-pag
    - **Never send `ease1`–`ease4`.** Grading changes the user's scheduling.
 5. `MX_DEV=1` enables two dev commands:
    - `pycmd('mx:shot:<path>')` saves `mw.grab()` (no title bar).
+   - `pycmd('mx:menushot:<path>')` renders a sample menu in both themes to `<path>-light.png` / `-dark.png`, and writes `<path>-check.json`, which confirms that a menu built like Anki's carries the stylesheet and translucency.
    - `pycmd('mx:preview:deck-options/<deckId>')` renders that page in a hidden, off-screen view (titled `deck options` on the CDP list), so you can inspect and screenshot it without a window popping over the user's work. Hot-reload CSS there by bumping the `?v=` on `#mx-css`. It shows the user's real settings: never press Save in it.
 
    Launch in the background so Anki never takes focus:
@@ -63,6 +66,8 @@ On SvelteKit pages, style by Anki's stable component classes (`.deck-options-pag
 - **Window flags are lost on native-window recreation.** Re-apply the title-bar hints on `profile_did_open`. AppKit re-lays out the title bar after resizes, so `_center_traffic_lights` runs on Resize, Show and WindowStateChange.
 - **`isMaximized()` doesn't see macOS zoom.** Double-click calls `performZoom:` and honours `AppleActionOnDoubleClick`.
 - **`startSystemMove()` swallows the click.** A press treated as "empty toolbar" never reaches the page. The toolbar reports its clickable rects (`mx:rects`), and a missing report turns buttons into drag handles.
+- **Qt and Anki activate the app while launching, even under `open -g`.** `MX_QUIET` stops Anki's own calls. `scripts/lib/keep-focus.swift` hands focus back for anything left, and it guards **only during the launch** (plus 2 s). Running it longer fights the user when they click into Anki on purpose, and its activation counts then include their clicks. Do not use `Qt::AA_PluginApplication` to suppress activation, because it changes Qt's menu-bar handling.
+- **Offscreen widget renders paint a square background.** `QWidget.grab()` and `render()` of an unshown translucent menu fill the corners, while the real popup is clean. The script masks the corners. Verify window chrome such as shadows and corners on the real popup, with the user.
 - **Hidden labels still take up gap space.** Zero-size text keeps a flex gap. Round icon buttons need `gap: 0`.
 - **Specificity of the injected accent.** The live accent is injected as `html.mx{--mx-accent}`, and the CSS default sits on `:root`. Never set `--mx-accent` on `html.mx` in the stylesheet, or the system accent stops applying.
 - **Anki's own reduce-motion.** It is `body.reduce-motion`, separate from `prefers-reduced-motion`. Respect both.

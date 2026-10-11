@@ -337,6 +337,11 @@ Icons are Lucide outlines on a 24px grid, drawn at 16px (17px in round buttons, 
 - **Slider:** 4px fill-strong track, 18px white knob with a soft shadow.
 - **Notices:** 8px corners, no border, the state colour at 10 to 12% behind primary-label text, 12px type.
 
+### Menus (Qt popups)
+- **Panel:** 12px corners, translucent window so macOS draws a rounded shadow, 1px edge (black 12% / white 12%), 5px padding. Light ground rgba(246,246,248,0.94), dark rgba(42,42,44,0.94).
+- **Items:** 13px system type, 4px by 12px padding (24px on the right), 5px corners. The selected item is filled with the accent and set in the on-accent colour. Disabled items use the tertiary label.
+- **Separator:** 1px hairline inset 10px.
+
 ### Motion
 - House curve `cubic-bezier(0.2, 0.9, 0.25, 1)`. Control feedback is 100 to 120ms; the deck list enters with a 320ms rise of 6px from a 3px blur. Motion is gated on Anki's reduce-motion class and on the system reduced-motion preference.
 

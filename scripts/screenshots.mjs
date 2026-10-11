@@ -14,8 +14,8 @@
 // permission for the terminal you run it from. Window sizing also needs
 // Accessibility permission; without it the current size is used.
 
-import { execFileSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { execFileSync, spawn } from "node:child_process";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { createInterface } from "node:readline/promises";
@@ -106,6 +106,7 @@ async function launchWithDebugging() {
     "-g", "-a", ANKI,
     "--env", `QTWEBENGINE_REMOTE_DEBUGGING=${PORT}`,
     "--env", "MX_DEV=1",
+    "--env", "MX_QUIET=1",
     "--env", `QTWEBENGINE_CHROMIUM_FLAGS=${flags}`,
   ]);
   const end = Date.now() + 60000;
@@ -126,6 +127,66 @@ function sizeWindow() {
     return true;
   } catch {
     console.warn(`! could not resize the window (Accessibility permission?); keeping its current size`);
+    return false;
+  }
+}
+
+// --- Focus ------------------------------------------------------------------------
+// Qt activates an app as it finishes launching, even under `open -g`, so any
+// relaunch grabs focus for an instant. The watcher hands it straight back and
+// logs every activation, so the run can report honestly what happened.
+
+let watcher = null;
+const focusLog = [];
+
+async function startFocusWatcher() {
+  watcher = spawn("swift", [join(ROOT, "scripts/lib/keep-focus.swift"), "net.ankiweb.anki"], { stdio: ["ignore", "pipe", "ignore"] });
+  let ready;
+  const isReady = new Promise((r) => { ready = r; });
+  watcher.stdout.setEncoding("utf8");
+  watcher.stdout.on("data", (chunk) => {
+    for (const line of chunk.split("\n").filter(Boolean)) {
+      focusLog.push(line);
+      if (line.includes(" ready ")) ready(line.split(" ready ")[1]);
+    }
+  });
+  const holder = await Promise.race([isReady, sleep(20000).then(() => null)]);
+  if (holder === null) throw new Error("focus watcher did not start (is swift installed?)");
+  return holder;
+}
+
+function stopFocusWatcher() {
+  watcher?.kill();
+  watcher = null;
+}
+
+// Guard focus only while Anki launches, plus a short settling window, so the
+// watcher never fights the user switching to Anki on purpose later.
+const GUARD_MS = 6000;
+let guarded = false;
+async function guardFocus(launch) {
+  const holder = await startFocusWatcher();
+  guarded = true;
+  if (holder === "net.ankiweb.anki") console.warn("! Anki is the app you're in; the relaunch will interrupt you");
+  try {
+    await launch();
+    await sleep(2000);
+  } finally {
+    stopFocusWatcher();
+  }
+}
+
+function focusReport() {
+  const grabs = focusLog.filter((l) => l.endsWith("activated net.ankiweb.anki")).length;
+  const returns = focusLog.filter((l) => l.includes(" returned ")).length;
+  return { grabs, returns };
+}
+
+async function debuggableAnkiRunning() {
+  try {
+    const titles = (await pages()).map((p) => p.title);
+    return ["main webview", "top toolbar", "bottom toolbar"].every((t) => titles.includes(t));
+  } catch {
     return false;
   }
 }
@@ -189,6 +250,43 @@ async function deckOptions(deckId) {
   }
 }
 
+// An offscreen render paints a square window background behind the menu; the
+// real popup is translucent. Cut the corners to the menu's 12pt radius (2x).
+function roundCorners(src, dest, r = 24) {
+  const inside = `lte(pow(max(max(${r}-X\\,X-(W-1-${r}))\\,0)\\,2)+pow(max(max(${r}-Y\\,Y-(H-1-${r}))\\,0)\\,2)\\,${r * r})`;
+  try {
+    run("ffmpeg", ["-loglevel", "error", "-y", "-i", src, "-vf",
+      `format=rgba,geq=r='r(X,Y)':g='g(X,Y)':b='b(X,Y)':a='if(${inside},alpha(X,Y),0)'`, dest]);
+  } catch {
+    run("cp", [src, dest]); // no ffmpeg: keep the square render
+  }
+}
+
+async function menus() {
+  const base = join(scratch, "menu");
+  await main(`pycmd(${JSON.stringify(`mx:menushot:${base}`)}), true`);
+  for (const theme of ["light", "dark"]) {
+    const raw = `${base}-${theme}.png`;
+    const end = Date.now() + 5000;
+    while (!nonEmpty(raw)) {
+      if (Date.now() > end) throw new Error("no menu image was rendered");
+      await sleep(150);
+    }
+    await sleep(150);
+    if (theme === "light") {
+      const check = JSON.parse(readFileSync(`${base}-check.json`, "utf8"));
+      if (!check.stylesheet_attached || !check.translucent) {
+        throw new Error(`menus are not being styled: ${JSON.stringify(check)}`);
+      }
+    }
+    const file = join(OUT, `menu-${theme}.png`);
+    rmSync(file, { force: true });
+    roundCorners(raw, file);
+    written.push(file);
+    console.log(`  ✓ menu-${theme}.png`);
+  }
+}
+
 async function both(name, { light = true, dark = true } = {}) {
   if (light) { await setDark(false); await capture(`${name}-light`); }
   if (dark) { await setDark(true); await capture(`${name}-dark`); }
@@ -209,9 +307,14 @@ async function shoot() {
   mkdirSync(OUT, { recursive: true });
   await confirm();
 
-  console.log("Relaunching Anki in the background with debugging…");
-  await quitAnki();
-  await launchWithDebugging();
+  if (await debuggableAnkiRunning()) {
+    reused = true;
+    console.log("Using the Anki already running with debugging (no relaunch).");
+  } else {
+    console.log("Relaunching Anki in the background with debugging…");
+    await quitAnki();
+    await guardFocus(() => launchWithDebugging());
+  }
   sizeWindow();
   await sleep(800);
 
@@ -229,7 +332,18 @@ async function shoot() {
   if (!deckId) throw new Error(deckName ? `no deck named "${deckName}"` : "the collection has no decks");
 
   console.log("Deck options (hidden preview)");
-  await deckOptions(deckId);
+  try {
+    await deckOptions(deckId);
+  } catch (err) {
+    console.warn(`! skipped deck options: ${err.message} (the running Anki needs MX_DEV=1)`);
+  }
+
+  console.log("Menus (rendered offscreen)");
+  try {
+    await menus();
+  } catch (err) {
+    console.warn(`! skipped menus: ${err.message} (the running Anki needs MX_DEV=1)`);
+  }
 
   console.log("Overview");
   await main(`pycmd(${JSON.stringify(`open:${deckId}`)}), true`);
@@ -252,6 +366,7 @@ async function shoot() {
 }
 
 let failed = false;
+let reused = false;
 try {
   await shoot();
 } catch (err) {
@@ -259,11 +374,21 @@ try {
   console.error(`✗ ${err.message}`);
 } finally {
   try { await toolbar("pycmd('decks'), true"); } catch { /* Anki may be gone */ }
-  if (!flag("--keep-debug") && ankiRunning()) {
+  if (!reused && !flag("--keep-debug") && ankiRunning()) {
     console.log("Relaunching Anki normally…");
     await quitAnki().catch(() => {});
-    run("open", ["-g", "-a", ANKI]);
+    await guardFocus(async () => {
+      run("open", ["-g", "-a", ANKI, "--env", "MX_QUIET=1"]);
+      await sleep(GUARD_MS); // Anki activates while it finishes launching
+    });
   }
+}
+
+if (guarded) {
+  const { grabs, returns } = focusReport();
+  console.log(grabs
+    ? `Focus: Anki took focus ${grabs} time(s) while launching; it was handed back ${returns} time(s).`
+    : "Focus: Anki never took focus while launching.");
 }
 
 rmSync(scratch, { recursive: true, force: true });

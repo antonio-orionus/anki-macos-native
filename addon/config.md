@@ -1,3 +1,4 @@
 - **unified_titlebar** — merge the toolbar into the macOS title bar (traffic lights sit in the toolbar, the window title is hidden). Restart Anki after changing.
 - **restyle_cards** — set card text in the system font on the window background. Turn off to let your note types' own styling show unchanged.
 - **accent** — `"system"` follows the macOS accent colour; or a hex colour such as `"#ff2d55"`.
+- **restyle_menus** — macOS-style popup menus (deck options, More, context menus). Restart Anki after changing.

@@ -20,12 +20,14 @@ from aqt.reviewer import Reviewer, ReviewerBottomBar
 from aqt.toolbar import BottomToolbar, TopToolbar
 from aqt.webview import AnkiWebView, WebContent
 
-from . import titlebar
+from . import menus, quiet, titlebar
 
 ADDON = __name__.split(".")[-1]
 IS_MAC = sys.platform == "darwin"
 
 mw.addonManager.setWebExports(__name__, r"web/.*\.(css|js)")
+
+
 
 # Order matters: the bottom bars are checked before their screens.
 SCREENS: list[tuple[type, str]] = [
@@ -176,6 +178,48 @@ def dev_preview(path: str) -> None:
     _previews.append(view)
 
 
+def menu_qss() -> str:
+    from aqt.theme import theme_manager
+
+    accent = accent_hex() or "#0a60ff"
+    return menus.qss(theme_manager.night_mode, accent, on_accent(accent))
+
+
+def dev_menu_shot(path: str) -> None:
+    """MX_DEV only: render a sample menu in both themes to <path>-light.png
+    and <path>-dark.png without showing it."""
+    from aqt.qt import QColor, QMenu, QPixmap, QPoint, QRegion, Qt, QWidget
+
+    accent = accent_hex() or "#0a60ff"
+    probe = QMenu(mw)  # built exactly like Anki builds its menus
+    with open(f"{path}-check.json", "w") as f:
+        json.dump({
+            "stylesheet_attached": bool(probe.styleSheet()),
+            "translucent": probe.testAttribute(Qt.WidgetAttribute.WA_TranslucentBackground),
+        }, f)
+    probe.deleteLater()
+    for night in (False, True):
+        menu = QMenu(mw)
+        for label in ("Rename", "Options", "Export"):
+            menu.addAction(label)
+        menu.addSeparator()
+        menu.addAction("Delete")
+        if night:  # light uses the stylesheet the constructor attached
+            menu.setStyleSheet(menus.qss(True, accent, on_accent(accent)))
+        menu.setActiveAction(menu.actions()[1])
+        menu.adjustSize()
+        menu.ensurePolished()
+        # Render onto a transparent canvas: grab() fills in a window background,
+        # which would square off the rounded corners the real popup has.
+        ratio = mw.devicePixelRatioF()
+        pixmap = QPixmap(menu.size() * ratio)
+        pixmap.setDevicePixelRatio(ratio)
+        pixmap.fill(QColor(0, 0, 0, 0))
+        menu.render(pixmap, QPoint(), QRegion(), QWidget.RenderFlag.DrawChildren)
+        pixmap.save(f"{path}-{'dark' if night else 'light'}.png")
+        menu.deleteLater()
+
+
 def on_js_message(handled: tuple[bool, Any], message: str, context: Any):
     if not message.startswith("mx:"):
         return handled
@@ -186,6 +230,8 @@ def on_js_message(handled: tuple[bool, Any], message: str, context: Any):
         mw.grab().save(payload)
     elif kind == "preview" and os.environ.get("MX_DEV"):
         dev_preview(payload)
+    elif kind == "menushot" and os.environ.get("MX_DEV"):
+        dev_menu_shot(payload)
     return (True, None)
 
 
@@ -218,6 +264,11 @@ def on_main_window_init() -> None:
     if unified_titlebar_enabled():
         titlebar.install(mw)
 
+
+if config().get("restyle_menus", True):
+    menus.install(menu_qss)
+
+quiet.install(mw)  # MX_QUIET only: dev relaunches never take focus
 
 gui_hooks.webview_will_set_content.append(on_set_content)
 gui_hooks.webview_did_inject_style_into_page.append(on_page_styled)
