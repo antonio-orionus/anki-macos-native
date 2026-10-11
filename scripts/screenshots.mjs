@@ -121,6 +121,21 @@ async function launchWithDebugging() {
   await sleep(800);
 }
 
+// The pages can be ready before the main window is on screen; wait for it,
+// or resizing and window capture fail.
+async function waitForWindow(timeout = 20000) {
+  const end = Date.now() + timeout;
+  for (;;) {
+    try {
+      windowId = run("swift", [join(ROOT, "scripts/lib/window-id.swift")], { stdio: ["ignore", "pipe", "ignore"] });
+      return;
+    } catch {
+      if (Date.now() > end) throw new Error("Anki's main window never appeared on screen");
+      await sleep(500);
+    }
+  }
+}
+
 function sizeWindow() {
   try {
     osa(`tell application "System Events" to tell process "Anki" to set size of (first window whose name ends with "Anki") to {${winW}, ${winH}}`);
@@ -409,6 +424,7 @@ async function shoot() {
     await quitAnki();
     await guardFocus(() => launchWithDebugging());
   }
+  await waitForWindow();
   sizeWindow();
   await sleep(800);
   if (flag("--launch-only")) {
