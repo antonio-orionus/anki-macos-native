@@ -312,7 +312,7 @@ Icons are Lucide outlines on a 24px grid, drawn at 16px (17px in round buttons, 
 - **Corner Style:** 12px.
 - **Background:** group surface, opaque.
 - **Shadow Strategy:** Group shadow (see Elevation & Depth).
-- **Rows:** 40 to 42px, 12 to 14px insets, 0.5px separator between rows, none after the last. Hover mixes 4% label into the surface; the current deck is tinted 13% with the accent. Overview rows lead with an 8px state dot and end with a 600 15px tabular value in the state colour; zero rows fade the dot to 35% and the value to tertiary.
+- **Rows:** 40 to 42px, 12 to 14px insets, 0.5px separator between rows, none after the last. Hover mixes 4% label into the surface; the current deck is tinted 13% with the accent. Overview rows lead with an 8px state dot and end with a 600 15px tabular value in the state colour; zero rows fade the dot to 35% and set the value in the secondary label at 500.
 - **Disclosure and options:** a rotating chevron (90 degrees, 160ms) replaces Anki's plus/minus; deck options are a 26px round ellipsis, tertiary at rest, secondary on row hover, filled on its own hover.
 
 ### Count Badges
@@ -326,7 +326,16 @@ Icons are Lucide outlines on a 24px grid, drawn at 16px (17px in round buttons, 
 
 ### Reviewer Answer Capsule (signature)
 - One glass capsule, always 52px tall, centred on the bottom axis. Before the answer it is the accent: a single Show Answer capsule (min 300px) with a Space keycap, and the remaining counts (new, learn, review in their state colours, separated by tertiary middots, current one underlined) float 12px above it. After the answer it becomes glass with 4px padding holding four 44px grade segments, 104px wide: label over interval, a numbered keycap at the trailing edge, coloured red, orange, green, blue. The default grade (Good) carries a 13% green tint and the hairlines beside it hide.
-- **Morph:** on Show Answer, the capsule animates its width from the old to the new size over 340ms on the house curve, while each segment fades in from 94% scale and a 4px blur, 260ms, staggered 24ms. Skipped entirely under Anki's reduce-motion setting or the system preference.
+- **Morph:** in both directions (Show Answer to grades and back), the capsule animates its width from the old to the new size over 340ms on the house curve, while each segment fades in from 94% scale and a 4px blur, 260ms, staggered 24ms. Skipped entirely under Anki's reduce-motion setting or the system preference.
+
+### Settings Controls (Deck Options)
+- **Toolbar strip:** the toolbar bar colour with a hairline under it. The preset pop-up is a 30px field; **Save** is a 30px accent capsule; its menu is a 30px round glass button.
+- **Sections:** grouped panels (12px, group surface, group shadow) titled 700 17px display with a hairline under the title. Settings are split by 0.5px hairlines drawn on each `.row`.
+- **Segmented control:** an 8px fill track with 2px padding; segments are 22px, 500 12px, secondary label; the active segment is a raised white (dark: 20% white) 5px pill in the primary label.
+- **Fields and pop-ups:** 28px, 8px corners, field surface (white; dark 7% white) with a 0.5px edge ring, 400 13px tabular. Focus takes the accent focus ring.
+- **Switch:** 36 by 20px capsule, fill strong when off and accent when on, a white 16px knob drawn as a gradient that slides over 160ms.
+- **Slider:** 4px fill-strong track, 18px white knob with a soft shadow.
+- **Notices:** 8px corners, no border, the state colour at 10 to 12% behind primary-label text, 12px type.
 
 ### Motion
 - House curve `cubic-bezier(0.2, 0.9, 0.25, 1)`. Control feedback is 100 to 120ms; the deck list enters with a 320ms rise of 6px from a 3px blur. Motion is gated on Anki's reduce-motion class and on the system reduced-motion preference.

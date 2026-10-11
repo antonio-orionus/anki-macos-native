@@ -1,7 +1,8 @@
-"""Native macOS look for Anki's main window.
+"""Native macOS look for Anki.
 
-Injects one stylesheet and one script into every main-window webview and,
-on macOS, merges the top toolbar into the title bar.
+Injects one stylesheet and one script into every main-window webview, adds
+the stylesheet to supported SvelteKit pages (deck options), and on macOS
+merges the top toolbar into the title bar.
 """
 
 from __future__ import annotations
@@ -17,7 +18,7 @@ from aqt.overview import Overview, OverviewBottomBar
 from aqt.qt import QApplication, QPalette
 from aqt.reviewer import Reviewer, ReviewerBottomBar
 from aqt.toolbar import BottomToolbar, TopToolbar
-from aqt.webview import WebContent
+from aqt.webview import AnkiWebView, WebContent
 
 from . import titlebar
 
@@ -113,6 +114,68 @@ def on_set_content(web_content: WebContent, context: object | None) -> None:
 
 
 
+# SvelteKit pages never pass through webview_will_set_content; they are
+# matched by URL path once Anki has injected its own styles.
+SVELTE_PAGES: dict[str, str] = {
+    "/deck-options": "deck-options",
+}
+
+
+def svelte_screen(webview: AnkiWebView) -> str | None:
+    path = webview.page().url().path()
+    for prefix, screen in SVELTE_PAGES.items():
+        if path.startswith(prefix):
+            return screen
+    return None
+
+
+def on_page_styled(webview: AnkiWebView) -> None:
+    screen = svelte_screen(webview)
+    if not screen:
+        return
+    classes = ["mx"]
+    accent = accent_hex()
+    js = f"""(() => {{
+      const root = document.documentElement;
+      root.dataset.mx = {json.dumps(screen)};
+      root.classList.add(...{json.dumps(classes)});
+      let vars = document.getElementById("mx-vars");
+      if (!vars) {{
+        vars = document.createElement("style");
+        vars.id = "mx-vars";
+        document.head.appendChild(vars);
+      }}
+      vars.textContent = {json.dumps(accent_vars(accent) if accent else "")};
+      if (!document.getElementById("mx-css")) {{
+        const link = document.createElement("link");
+        link.id = "mx-css";
+        link.rel = "stylesheet";
+        link.href = "/_addons/{ADDON}/web/macos.css";
+        document.head.appendChild(link);
+      }}
+    }})()"""
+    webview.eval(js)
+
+
+_previews: list[AnkiWebView] = []
+
+
+def dev_preview(path: str) -> None:
+    """MX_DEV only: render a SvelteKit page offscreen, inspectable over the
+    remote-debugging port, without opening a window over the user's work."""
+    from aqt.qt import QWidget, Qt
+    from aqt.webview import AnkiWebViewKind
+
+    kind = AnkiWebViewKind.DECK_OPTIONS if path.startswith("deck-options") else AnkiWebViewKind.DEFAULT
+    view = AnkiWebView(kind=kind)
+    view.setWindowFlags(Qt.WindowType.Tool | Qt.WindowType.WindowDoesNotAcceptFocus)
+    view.setAttribute(Qt.WidgetAttribute.WA_ShowWithoutActivating, True)
+    view.setGeometry(-20000, -20000, 820, 1000)  # a real window, but off every screen
+    view.show()
+    view.load_sveltekit_page(path)
+    _previews.append(view)
+
+
 def on_js_message(handled: tuple[bool, Any], message: str, context: Any):
     if not message.startswith("mx:"):
         return handled
@@ -121,6 +184,8 @@ def on_js_message(handled: tuple[bool, Any], message: str, context: Any):
         titlebar.set_control_rects(json.loads(payload or "[]"))
     elif kind == "shot" and os.environ.get("MX_DEV"):
         mw.grab().save(payload)
+    elif kind == "preview" and os.environ.get("MX_DEV"):
+        dev_preview(payload)
     return (True, None)
 
 
@@ -155,6 +220,7 @@ def on_main_window_init() -> None:
 
 
 gui_hooks.webview_will_set_content.append(on_set_content)
+gui_hooks.webview_did_inject_style_into_page.append(on_page_styled)
 gui_hooks.webview_did_receive_js_message.append(on_js_message)
 gui_hooks.state_did_change.append(on_state_change)
 gui_hooks.theme_did_change.append(on_theme_change)

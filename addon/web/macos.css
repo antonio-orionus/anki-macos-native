@@ -961,6 +961,229 @@ html.mx[data-mx="reviewer-bottom"] .mx-capsule td:has(#defease) + td::before { o
   html.mx[data-mx="reviewer-bottom"] #ansbut { min-width: 220px; }
 }
 
+/* =========================================================== deck options */
+/* A SvelteKit page: styled by stable component class names only, never the
+   generated svelte-xxxx hashes, which change with every Anki release. */
+
+html.mx[data-mx="deck-options"] {
+  --mx-field: #ffffff;
+  --mx-field-edge: rgb(0 0 0 / 0.16);
+  --mx-segment: #ffffff;
+  font-size: 13px !important;
+}
+html.mx.night-mode[data-mx="deck-options"] {
+  --mx-field: rgb(255 255 255 / 0.07);
+  --mx-field-edge: rgb(255 255 255 / 0.12);
+  --mx-segment: rgb(255 255 255 / 0.20);
+}
+html.mx[data-mx="deck-options"] body { font-size: 13px; }
+
+/* Toolbar strip: preset pop-up and Save. */
+html.mx[data-mx="deck-options"] .sticky-container {
+  background: var(--mx-bar) !important;
+  border: none !important;
+  box-shadow: inset 0 -0.5px 0 var(--mx-separator);
+  padding: 10px 0 !important;
+}
+html.mx.night-mode[data-mx="deck-options"] .sticky-container { box-shadow: inset 0 -0.5px 0 rgb(0 0 0 / 0.55); }
+html.mx[data-mx="deck-options"] .button-bar { align-items: center; gap: 10px; }
+html.mx[data-mx="deck-options"] .button-bar .select-container { height: 30px; }
+html.mx[data-mx="deck-options"] button.label-button.primary {
+  height: 30px;
+  padding: 0 18px !important;
+  border: none !important;
+  border-radius: 999px !important;
+  background: var(--mx-accent) !important;
+  color: var(--mx-on-accent) !important;
+  font: 600 13px/1 var(--mx-font) !important;
+  box-shadow: inset 0 0.5px 0 rgb(255 255 255 / 0.3), var(--mx-glass-shadow) !important;
+}
+html.mx[data-mx="deck-options"] button.label-button.primary:hover { background: color-mix(in srgb, var(--mx-accent) 90%, white) !important; }
+html.mx[data-mx="deck-options"] button.label-button.primary .save { margin: 0 !important; }
+html.mx[data-mx="deck-options"] button.icon-button.chevron {
+  width: 30px;
+  height: 30px;
+  margin-left: 6px;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 50% !important;
+  background: var(--mx-glass) !important;
+  color: var(--mx-label) !important;
+  box-shadow: inset 0 0.5px 0 var(--mx-glass-spec), inset 0 0 0 0.5px var(--mx-glass-edge), var(--mx-glass-shadow) !important;
+}
+html.mx[data-mx="deck-options"] button.icon-button.chevron:hover { background: var(--mx-glass-hover) !important; }
+
+/* Sections: grouped panels with a quiet title. */
+html.mx[data-mx="deck-options"] .container-columns { gap: 18px !important; }
+html.mx[data-mx="deck-options"] :is(.container.light, .container.dark) {
+  padding: 14px 18px 6px !important;
+  border: none !important;
+  border-radius: var(--mx-radius) !important;
+  background: var(--mx-group) !important;
+  box-shadow: var(--mx-group-shadow) !important;
+}
+html.mx[data-mx="deck-options"] :is(.container.light, .container.dark) > .position-relative > h1 {
+  margin: 0 0 4px;
+  padding: 0 0 10px;
+  border-bottom: 0.5px solid var(--mx-separator) !important;
+  color: var(--mx-label);
+  font: 700 17px/1.25 var(--mx-font-display) !important;
+  letter-spacing: -0.012em;
+}
+html.mx[data-mx="deck-options"] .help-badge button.badge {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--mx-label-3);
+}
+html.mx[data-mx="deck-options"] .help-badge button.badge:hover { color: var(--mx-label-2); }
+html.mx[data-mx="deck-options"] .help-badge svg { width: 18px; height: 18px; }
+
+/* Setting rows, separated by hairlines like System Settings. The .item and
+   wrapper elements are display: contents, so the outer .row draws them. */
+html.mx[data-mx="deck-options"] .dynamically-slottable > .item > :is(.row, svelte-css-wrapper > .row) { padding-block: 7px !important; }
+html.mx[data-mx="deck-options"] .dynamically-slottable > .item + .item > :is(.row, svelte-css-wrapper > .row) {
+  box-shadow: inset 0 0.5px 0 var(--mx-separator);
+}
+html.mx[data-mx="deck-options"] .setting-title { color: var(--mx-label); font-size: 13px; }
+html.mx[data-mx="deck-options"] .revert,
+html.mx[data-mx="deck-options"] .setting-title + * svg,
+html.mx[data-mx="deck-options"] svg#mdi-earth { color: var(--mx-label-3); }
+
+/* Preset / This deck / Today only: a segmented control. */
+html.mx[data-mx="deck-options"] .dynamically-slottable ul:has(> li > button) {
+  display: inline-flex !important;
+  gap: 0;
+  width: auto;
+  margin: 2px 0 6px auto;
+  padding: 2px;
+  list-style: none;
+  border-radius: var(--mx-radius-sm);
+  background: var(--mx-fill);
+}
+html.mx[data-mx="deck-options"] .dynamically-slottable ul:has(> li > button) > li > button {
+  height: 22px;
+  padding: 0 12px;
+  border: none !important;
+  border-radius: 5px !important;
+  background: transparent !important;
+  color: var(--mx-label-2) !important;
+  font: 500 12px/22px var(--mx-font) !important;
+  box-shadow: none !important;
+}
+html.mx[data-mx="deck-options"] .dynamically-slottable ul:has(> li > button) > li.active > button {
+  background: var(--mx-segment) !important;
+  color: var(--mx-label) !important;
+  box-shadow: 0 0.5px 1.5px rgb(0 0 0 / 0.16), inset 0 0 0 0.5px var(--mx-glass-edge) !important;
+}
+
+/* Fields: spin boxes, text inputs and pop-up selects. */
+html.mx[data-mx="deck-options"] :is(.spin-box, .select-container),
+html.mx[data-mx="deck-options"] .config-input input:not([type=checkbox]):not([type=range]):not(.spin-box input) {
+  min-height: 28px;
+  border: none !important;
+  border-radius: var(--mx-radius-sm) !important;
+  background: var(--mx-field) !important;
+  box-shadow: inset 0 0 0 0.5px var(--mx-field-edge), 0 0.5px 1px rgb(0 0 0 / 0.05) !important;
+  color: var(--mx-label) !important;
+  font: 400 13px/28px var(--mx-font) !important;
+  font-variant-numeric: tabular-nums;
+}
+html.mx[data-mx="deck-options"] .spin-box input {
+  background: transparent !important;
+  box-shadow: none !important;
+  font: inherit;
+  color: inherit;
+}
+html.mx[data-mx="deck-options"] .select-container:hover { background: var(--mx-field) !important; }
+html.mx[data-mx="deck-options"] .select-container .chevron {
+  border: none !important;
+  color: var(--mx-label-2);
+}
+html.mx[data-mx="deck-options"] :is(.spin-box, .select-container):focus-within,
+html.mx[data-mx="deck-options"] .config-input input:not(.spin-box input):focus {
+  box-shadow: 0 0 0 3.5px color-mix(in srgb, var(--mx-accent) 45%, transparent) !important;
+}
+
+/* Switches: macOS style, knob drawn as a gradient so no markup changes. */
+html.mx[data-mx="deck-options"] .form-switch .form-check-input {
+  width: 36px !important;
+  height: 20px !important;
+  border: none !important;
+  border-radius: 999px !important;
+  background-color: var(--mx-fill-strong) !important;
+  background-image:
+    radial-gradient(circle at center, #fff 0 8px, rgb(0 0 0 / 0.14) 8.5px, transparent 9.5px) !important;
+  background-size: 20px 20px !important;
+  background-repeat: no-repeat !important;
+  background-position: left center !important;
+  box-shadow: inset 0 0 0 0.5px rgb(0 0 0 / 0.06) !important;
+  transition: background-position 160ms var(--mx-ease), background-color 160ms ease;
+  cursor: default;
+}
+html.mx[data-mx="deck-options"] .form-switch .form-check-input:checked {
+  background-color: var(--mx-accent) !important;
+  background-position: right center !important;
+}
+
+/* Sliders (Easy Days): thin track, white knob, accent fill. */
+html.mx[data-mx="deck-options"] input[type=range] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 20px;
+  background: transparent;
+  accent-color: var(--mx-accent);
+}
+html.mx[data-mx="deck-options"] input[type=range]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--mx-fill-strong);
+}
+html.mx[data-mx="deck-options"] input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-top: -7px;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0.5px 2px rgb(0 0 0 / 0.3), 0 0 0 0.5px rgb(0 0 0 / 0.08);
+}
+
+html.mx[data-mx="deck-options"] .deck-options-page table :is(td, th) { border-color: var(--mx-separator) !important; }
+
+/* Inline notices instead of Bootstrap alerts. */
+html.mx[data-mx="deck-options"] .alert {
+  padding: 10px 12px !important;
+  border: none !important;
+  border-radius: var(--mx-radius-sm) !important;
+  font-size: 12px !important;
+  line-height: 1.45;
+}
+html.mx[data-mx="deck-options"] .alert-warning { background: color-mix(in srgb, var(--mx-orange) 12%, transparent) !important; color: var(--mx-label) !important; }
+html.mx[data-mx="deck-options"] .alert-info { background: color-mix(in srgb, var(--mx-blue) 10%, transparent) !important; color: var(--mx-label) !important; }
+html.mx[data-mx="deck-options"] .alert-danger { background: color-mix(in srgb, var(--mx-red) 12%, transparent) !important; color: var(--mx-label) !important; }
+
+/* Secondary buttons elsewhere on the page (FSRS, Advanced). */
+html.mx[data-mx="deck-options"] .deck-options-page :is(.btn:not(.btn-close), button.label-button:not(.primary)) {
+  height: 28px;
+  padding: 0 14px !important;
+  border: none !important;
+  border-radius: 999px !important;
+  background: var(--mx-glass) !important;
+  color: var(--mx-label) !important;
+  font: 500 13px/28px var(--mx-font) !important;
+  box-shadow: inset 0 0.5px 0 var(--mx-glass-spec), inset 0 0 0 0.5px var(--mx-glass-edge), var(--mx-glass-shadow) !important;
+}
+
+/* Help sheets. */
+html.mx[data-mx="deck-options"] .modal-content {
+  border: none !important;
+  border-radius: var(--mx-radius) !important;
+  background: var(--mx-group) !important;
+  box-shadow: var(--mx-glass-shadow-lift) !important;
+}
+
 /* ================================================================= motion */
 
 html.mx body:not(.reduce-motion) .mx-enter {

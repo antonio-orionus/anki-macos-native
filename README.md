@@ -10,6 +10,7 @@ An Anki add-on that makes Anki's main window look and behave like a native macOS
 | **Overview** | ![Overview, light](docs/screenshots/overview-light.png) | ![Overview, dark](docs/screenshots/overview-dark.png) |
 | **Question** | ![Question, light](docs/screenshots/question-light.png) | ![Question, dark](docs/screenshots/question-dark.png) |
 | **Answer** | ![Answer, light](docs/screenshots/answer-light.png) | ![Answer, dark](docs/screenshots/answer-dark.png) |
+| **Deck Options** | ![Deck Options, light](docs/screenshots/deck-options-light.png) | ![Deck Options, dark](docs/screenshots/deck-options-dark.png) |
 
 ## What it changes
 
@@ -20,6 +21,11 @@ An Anki add-on that makes Anki's main window look and behave like a native macOS
   - The card sits on the window ground in the system font.
   - A floating capsule turns from **Show Answer** into four grade segments (Again / Hard / Good / Easy). Each segment shows its interval and a keycap for its shortcut. The morph is skipped when Anki's *Reduce motion* is on.
   - Mark and flag show as small glass badges.
+- **Deck Options.** It looks like System Settings:
+  - grouped sections with quiet titles and hairline rows
+  - segmented controls for Preset / This deck / Today only
+  - native-looking fields, pop-ups, switches and sliders
+  - a toolbar strip with the preset menu and an accent **Save** button
 - **Theme.** It follows Anki's Light / Dark / System theme and your macOS accent colour. Text on the accent switches between white and black to stay readable.
 
 It changes presentation only. Anki's own buttons, links, keyboard shortcuts, deck drag-and-drop, shift-click selection and other add-ons' toolbar items keep working.
@@ -50,7 +56,7 @@ Go to **Tools → Add-ons → macOS Native → Config**.
 
 ## Not covered yet
 
-The Browse window, the Add / Edit editor, deck options and statistics are separate pages or Qt dialogs, and they keep Anki's own look.
+The Browse window, the Add / Edit editor and statistics are separate pages or Qt dialogs, and they keep Anki's own look.
 
 ## Credits
 
