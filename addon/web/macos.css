@@ -965,18 +965,18 @@ html.mx[data-mx="reviewer-bottom"] .mx-capsule td:has(#defease) + td::before { o
 /* A SvelteKit page: styled by stable component class names only, never the
    generated svelte-xxxx hashes, which change with every Anki release. */
 
-html.mx[data-mx="deck-options"] {
+html.mx:is([data-mx="deck-options"], [data-mx="stats"]) {
   --mx-field: #ffffff;
   --mx-field-edge: rgb(0 0 0 / 0.16);
   --mx-segment: #ffffff;
   font-size: 13px !important;
 }
-html.mx.night-mode[data-mx="deck-options"] {
+html.mx.night-mode:is([data-mx="deck-options"], [data-mx="stats"]) {
   --mx-field: rgb(255 255 255 / 0.07);
   --mx-field-edge: rgb(255 255 255 / 0.12);
   --mx-segment: rgb(255 255 255 / 0.20);
 }
-html.mx[data-mx="deck-options"] body { font-size: 13px; }
+html.mx:is([data-mx="deck-options"], [data-mx="stats"]) body { font-size: 13px; }
 
 /* Toolbar strip: preset pop-up and Save. */
 html.mx[data-mx="deck-options"] .sticky-container {
@@ -1015,14 +1015,14 @@ html.mx[data-mx="deck-options"] button.icon-button.chevron:hover { background: v
 
 /* Sections: grouped panels with a quiet title. */
 html.mx[data-mx="deck-options"] .container-columns { gap: 18px !important; }
-html.mx[data-mx="deck-options"] :is(.container.light, .container.dark) {
+html.mx:is([data-mx="deck-options"], [data-mx="stats"]) :is(.container.light, .container.dark) {
   padding: 14px 18px 6px !important;
   border: none !important;
   border-radius: var(--mx-radius) !important;
   background: var(--mx-group) !important;
   box-shadow: var(--mx-group-shadow) !important;
 }
-html.mx[data-mx="deck-options"] :is(.container.light, .container.dark) > .position-relative > h1 {
+html.mx:is([data-mx="deck-options"], [data-mx="stats"]) :is(.container.light, .container.dark) > .position-relative > h1 {
   margin: 0 0 4px;
   padding: 0 0 10px;
   border-bottom: 0.5px solid var(--mx-separator) !important;
@@ -1030,14 +1030,14 @@ html.mx[data-mx="deck-options"] :is(.container.light, .container.dark) > .positi
   font: 700 17px/1.25 var(--mx-font-display) !important;
   letter-spacing: -0.012em;
 }
-html.mx[data-mx="deck-options"] .help-badge button.badge {
+html.mx:is([data-mx="deck-options"], [data-mx="stats"]) .help-badge button.badge {
   padding: 0;
   border: none;
   background: none;
   color: var(--mx-label-3);
 }
-html.mx[data-mx="deck-options"] .help-badge button.badge:hover { color: var(--mx-label-2); }
-html.mx[data-mx="deck-options"] .help-badge svg { width: 18px; height: 18px; }
+html.mx:is([data-mx="deck-options"], [data-mx="stats"]) .help-badge button.badge:hover { color: var(--mx-label-2); }
+html.mx:is([data-mx="deck-options"], [data-mx="stats"]) .help-badge svg { width: 18px; height: 18px; }
 
 /* Setting rows, separated by hairlines like System Settings. The .item and
    wrapper elements are display: contents, so the outer .row draws them. */
@@ -1311,6 +1311,111 @@ html.mx[data-mx="editor"] .tag-editor .tag svg {
 }
 html.mx[data-mx="editor"] .tag-editor .tag:hover svg { opacity: 0.85; }
 html.mx[data-mx="editor"] .tag-editor .tag-input { font: 400 13px/22px var(--mx-font) !important; }
+
+/* ================================================================== stats */
+/* The Statistics window's graphs page. Panels, titles and fields come from
+   the deck-options rules above; the range bar becomes a toolbar strip and
+   every radio group a segmented control. Chart data colours stay Anki's. */
+
+html.mx[data-mx="stats"] { font-size: 13px !important; }
+html.mx[data-mx="stats"] .range-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 14px;
+  padding: 10px 16px !important;
+  background: var(--mx-bar) !important;
+  border: none !important;
+  box-shadow: inset 0 -0.5px 0 var(--mx-separator);
+  color: var(--mx-label) !important;
+}
+html.mx.night-mode[data-mx="stats"] .range-box { box-shadow: inset 0 -0.5px 0 rgb(0 0 0 / 0.55); }
+html.mx[data-mx="stats"] .range-box > div:not(.spin) { display: inline-flex; align-items: center; }
+html.mx[data-mx="stats"] .range-box input[type=text] {
+  height: 26px;
+  margin-left: 10px;
+  padding: 0 10px;
+  border: none;
+  border-radius: var(--mx-radius-sm);
+  background: var(--mx-field);
+  box-shadow: inset 0 0 0 0.5px var(--mx-field-edge), 0 0.5px 1px rgb(0 0 0 / 0.05);
+  color: var(--mx-label);
+  font: 400 13px/26px var(--mx-font);
+}
+html.mx[data-mx="stats"] .range-box input[type=text]:focus {
+  outline: none;
+  box-shadow: 0 0 0 3.5px color-mix(in srgb, var(--mx-accent) 45%, transparent);
+}
+
+/* Radio groups as segmented controls. The track is drawn on the labels, so a
+   field sharing the group (the search box) stays outside it. */
+html.mx[data-mx="stats"] :is(.range-box, .graph) div:has(> label > input[type=radio]) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2px auto 8px;
+}
+html.mx[data-mx="stats"] .range-box div:has(> label > input[type=radio]) { margin: 0; }
+html.mx[data-mx="stats"] :is(.range-box, .graph) label:has(> input[type=radio]) {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  margin: 0;
+  padding: 0 13px;
+  background: var(--mx-fill);
+  color: var(--mx-label-2);
+  font: 500 12px/1 var(--mx-font);
+  cursor: default;
+  white-space: nowrap;
+}
+html.mx[data-mx="stats"] :is(.range-box, .graph) label:has(> input[type=radio]):first-of-type { border-radius: var(--mx-radius-sm) 0 0 var(--mx-radius-sm); }
+html.mx[data-mx="stats"] :is(.range-box, .graph) label:has(> input[type=radio]):last-of-type { border-radius: 0 var(--mx-radius-sm) var(--mx-radius-sm) 0; }
+html.mx[data-mx="stats"] :is(.range-box, .graph) label:has(> input[type=radio]:checked) {
+  background: var(--mx-segment);
+  color: var(--mx-label);
+  border-radius: var(--mx-radius-sm);
+  box-shadow: inset 0 0 0 2px var(--mx-fill), 0 0.5px 1.5px rgb(0 0 0 / 0.14);
+  z-index: 1;
+}
+html.mx[data-mx="stats"] :is(.range-box, .graph) label:has(> input[type=radio]:focus-visible) {
+  box-shadow: 0 0 0 3.5px color-mix(in srgb, var(--mx-accent) 45%, transparent);
+}
+html.mx[data-mx="stats"] :is(.range-box, .graph) label > input[type=radio] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Charts: quiet axes and hairline ticks. */
+html.mx[data-mx="stats"] .graph .subtitle { color: var(--mx-label-2); font-size: 12px; margin-bottom: 8px; }
+/* Charts are SVGs drawn at about 1.8x their 600-unit width, so sizes are in
+   chart units (7.5 units is about 13px on screen). Anki shrinks the window's
+   chart scale on narrow widths, so the size steps up there, as Anki's does.
+   The selector outranks Anki's `.graph .tick text` (10 units, 50% opacity). */
+html.mx[data-mx="stats"] .graph svg text,
+html.mx[data-mx="stats"] .graph .tick text {
+  fill: var(--mx-label-2);
+  opacity: 1;
+  font-family: var(--mx-font);
+  font-size: 7.5px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 800px) {
+  html.mx[data-mx="stats"] .graph :is(svg text, .tick text) { font-size: 10px; }
+}
+@media (max-width: 600px) {
+  html.mx[data-mx="stats"] .graph :is(svg text, .tick text) { font-size: 12px; }
+}
+html.mx[data-mx="stats"] input[type=checkbox] { accent-color: var(--mx-accent); }
+html.mx[data-mx="stats"] svg :is(.tick line, path.domain) { stroke: var(--mx-separator); }
+html.mx[data-mx="stats"] .graph table { font-variant-numeric: tabular-nums; }
+html.mx[data-mx="stats"] .graph table td { padding: 1px 6px; }
+html.mx[data-mx="stats"] .graph table td.align-end { color: var(--mx-label-2); }
 
 /* ================================================================= motion */
 

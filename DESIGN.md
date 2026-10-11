@@ -42,6 +42,18 @@ colors:
   glass-edge-dark: "rgb(255 255 255 / 0.07)"
   glass-specular-dark: "rgb(255 255 255 / 0.16)"
 typography:
+  chart-axis:
+    fontFamily: "-apple-system, BlinkMacSystemFont, SF Pro Text, Helvetica Neue, sans-serif"
+    fontSize: "7.5px"
+    fontWeight: 500
+    lineHeight: 1
+    letterSpacing: "0"
+  chart-axis-narrow:
+    fontFamily: "-apple-system, BlinkMacSystemFont, SF Pro Text, Helvetica Neue, sans-serif"
+    fontSize: "10px"
+    fontWeight: 500
+    lineHeight: 1
+    letterSpacing: "0"
   large-title:
     fontFamily: "-apple-system, BlinkMacSystemFont, SF Pro Display, Helvetica Neue, sans-serif"
     fontSize: "26px"
@@ -349,6 +361,12 @@ Icons are Lucide outlines on a 24px grid, drawn at 16px (17px in round buttons, 
 - **Fields (app-wide):** every text field, combo box and spin box is an 8px-corner field surface with a 1px edge, 2px by 8px padding and at least 22px tall. Focus turns the edge to the accent without changing its width. Combo and spin arrows are drawn chevrons.
 - **Buttons:** 8px-corner field surfaces with a 1px edge. **Add** is the accent fill with on-accent 600 text.
 - **Scroll bars:** thin overlay-style handles (fill strong, 3px corners), since a stylesheet replaces the native ones.
+
+### Statistics
+- **Range bar:** the toolbar strip (bar colour with a hairline under it) holding the deck/collection and period choices as segmented controls, plus a 26px search field.
+- **Segmented control from radios:** the track (fill) is drawn on the labels, 8px at the outer corners, 26px tall, 500 12px. The checked label is a raised segment pill. The radio itself is visually hidden but stays focusable, with the accent focus ring on its label.
+- **Panels:** the deck-options panel system (12px group panels, 17px titles).
+- **Charts:** Anki's data colours. Axis text is the secondary label at full opacity, in chart units (7.5 units, about 13px on screen, stepping up on narrow windows), and ticks and the domain are hairlines.
 
 ### Menus (Qt popups)
 - **Panel:** 12px corners, translucent window so macOS draws a rounded shadow, 1px edge (black 12% / white 12%), 5px padding. Light ground rgba(246,246,248,0.94), dark rgba(42,42,44,0.94).

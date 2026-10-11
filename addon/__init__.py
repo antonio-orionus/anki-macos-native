@@ -129,6 +129,7 @@ def on_set_content(web_content: WebContent, context: object | None) -> None:
 SVELTE_PAGES: dict[str, str] = {
     "/deck-options": "deck-options",
     "/editor": "editor",
+    "/graphs": "stats",
 }
 
 
@@ -191,7 +192,7 @@ def restyle_window(window: Any) -> None:
     """Attach the Qt stylesheet for Browse or Add, by window type."""
     from aqt.theme import theme_manager
 
-    name = {"Browser": "browser", "AddCards": "add", "EditCurrent": "add"}.get(type(window).__name__)
+    name = {"Browser": "browser", "AddCards": "add", "EditCurrent": "add", "NewDeckStats": "add"}.get(type(window).__name__)
     if not name or not config().get("restyle_windows", True):
         return
     accent = accent_hex() or "#0a60ff"
@@ -338,6 +339,7 @@ def _fields_for(night: bool) -> None:
 dev.set_field_styler(_fields_for)
 gui_hooks.browser_will_show.append(restyle_window)
 gui_hooks.add_cards_did_init.append(restyle_window)
+gui_hooks.stats_dialog_will_show.append(restyle_window)
 
 gui_hooks.webview_will_set_content.append(on_set_content)
 gui_hooks.webview_did_inject_style_into_page.append(on_page_styled)

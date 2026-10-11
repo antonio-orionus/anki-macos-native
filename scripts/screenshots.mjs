@@ -341,6 +341,31 @@ async function qtWindows() {
   }
 }
 
+// Statistics opens off-screen; its graphs page is captured over CDP.
+async function statsPage() {
+  await main("pycmd('mx:open:stats'), true");
+  try {
+    const end = Date.now() + 20000;
+    for (;;) {
+      try { if (await evaluate("deck stats", "!!document.querySelector('.graphs-container h1') && !!document.getElementById('mx-css')")) break; } catch { /* loading */ }
+      if (Date.now() > end) throw new Error("timed out waiting for the statistics page");
+      await sleep(250);
+    }
+    await sleep(800); // charts animate in
+    for (const dark of [false, true]) {
+      await evaluate("deck stats", `(() => { document.documentElement.classList.toggle("night-mode", ${dark}); document.body.classList.toggle("nightMode", ${dark}); scrollTo(0, 0); return true; })()`);
+      await sleep(500);
+      const file = join(OUT, `stats-${dark ? "dark" : "light"}.png`);
+      await pageScreenshot("deck stats", file);
+      written.push(file);
+      console.log(`  ✓ ${file.split("/").pop()}`);
+    }
+  } finally {
+    await main("pycmd('mx:close:stats'), true");
+    await sleep(2500); // dev.py restores saved geometry again after 2 s
+  }
+}
+
 async function both(name, { light = true, dark = true } = {}) {
   await sleep(900); // let the window repaint after navigation before capturing
   if (light) { await setDark(false); await capture(`${name}-light`); }
@@ -416,6 +441,13 @@ async function shoot() {
     await qtWindows();
   } catch (err) {
     console.warn(`! skipped Browse/Add: ${err.message} (the running Anki needs MX_DEV=1)`);
+  }
+
+  console.log("Statistics (off-screen)");
+  try {
+    await statsPage();
+  } catch (err) {
+    console.warn(`! skipped statistics: ${err.message} (the running Anki needs MX_DEV=1)`);
   }
 
   console.log("Overview");
