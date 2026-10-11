@@ -192,6 +192,7 @@ html.mx .mx-round {
   width: 34px !important;
   height: 34px !important;
   padding: 0 !important;
+  gap: 0;
   border-radius: 50% !important;
   background: var(--mx-glass) !important;
   box-shadow:
