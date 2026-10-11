@@ -68,6 +68,10 @@ Go to **Tools → Add-ons → macOS Native → Config**.
 | `restyle_menus` | `true` | macOS-style popup menus. Restart Anki after changing it. |
 | `restyle_windows` | `true` | macOS styling for the Browse and Add / Edit windows. Restart Anki after changing it. |
 
+## Roadmap
+
+The Congratulations screen, Card Layout, Card Info, the Previewer and a few smaller dialogs still keep Anki's look. See [ROADMAP.md](ROADMAP.md).
+
 ## Credits
 
 Icons are from [Lucide](https://lucide.dev) (ISC licence). The add-on itself is [MIT](LICENSE).
