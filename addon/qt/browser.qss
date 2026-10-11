@@ -1,6 +1,6 @@
 /* Browse window. Tokens (@name@) are filled by qtstyle.py per theme. */
 
-QMainWindow, QMainWindow > QWidget { background: @ground@; }
+QMainWindow { background: @ground@; }
 
 /* Sidebar: a source list with rounded selection pills. */
 QTreeView {
@@ -41,18 +41,7 @@ QHeaderView::section {
     font-weight: 500;
 }
 
-/* Search field and sidebar filter. */
-QComboBox, QLineEdit {
-    background: @field@;
-    border: 1px solid @field_edge@;
-    border-radius: 8px;
-    padding: 3px 10px;
-    min-height: 20px;
-    font-size: 13px;
-    color: @label@;
-}
-QComboBox:focus, QLineEdit:focus { border: 2px solid @accent@; padding: 2px 9px; }
-QComboBox::drop-down { border: none; width: 22px; }
+/* Search field and sidebar filter: styled app-wide by fields.qss. */
 
 QToolButton {
     background: transparent;

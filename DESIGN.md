@@ -340,12 +340,13 @@ Icons are Lucide outlines on a 24px grid, drawn at 16px (17px in round buttons, 
 ### Note Editor
 - **Toolbar:** a ground strip with a hairline under it. Each button group is a glass capsule (8px corners, 2px padding) of flat 24px buttons with 5px corners, 500 12px. Hover takes the fill, and active or pressed takes fill strong.
 - **Fields:** labels are 600 12px in the secondary label. The field box is the field surface with 8px corners and a 0.5px edge ring, and focus takes the accent ring. Only the box is styled; the text inside belongs to the note.
-- **Tags:** the same field box, at least 30px tall.
+- **Tags:** the same field box, at least 32px tall, with 5px by 6px padding. Each tag is an accent-tinted capsule (13%, 20% on hover), 22px tall with 500 12px type and 4px between chips. Its delete icon is 12px at 40% opacity (85% on hover), and a selected tag gets an accent ring.
+- **Focus:** a 3.5px accent ring outside the field; duplicates get a red ring.
 
 ### Browse and Add Windows (Qt)
 - **Sidebar:** the sidebar ground (#ececee / #252527), 13px items with 6px rounded hover and selection pills (fill / fill strong).
 - **Table:** the group surface, a subtle alternate row, no grid, and an accent selection with on-accent text. The header is 500 12px secondary with hairline separators. Anki's row colours (flags, marked, suspended) are untouched.
-- **Fields:** the search box and filters are 8px-corner field surfaces with a 1px edge, plus a 2px accent border on focus.
+- **Fields (app-wide):** every text field, combo box and spin box is an 8px-corner field surface with a 1px edge, 2px by 8px padding and at least 22px tall. Focus turns the edge to the accent without changing its width. Combo and spin arrows are drawn chevrons.
 - **Buttons:** 8px-corner field surfaces with a 1px edge. **Add** is the accent fill with on-accent 600 text.
 - **Scroll bars:** thin overlay-style handles (fill strong, 3px corners), since a stylesheet replaces the native ones.
 

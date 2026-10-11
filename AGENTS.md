@@ -15,6 +15,7 @@ An Anki add-on (Anki 26.x, PyQt6 / QtWebEngine, macOS) that restyles the main wi
 - `addon/` is the add-on itself; it gets packaged.
   - `__init__.py`: hooks, screen detection, accent and on-accent injection, settings. SvelteKit pages (deck options) are styled from `webview_did_inject_style_into_page` by URL path (`SVELTE_PAGES`).
   - `menus.py`: macOS-style Qt popup menus. `QMenu.__init__` is wrapped so every menu created from Python gets the current theme's QSS and a translucent window. Attaching it per menu avoids depending on when Anki applies its app-wide stylesheet; a `style_did_init` hook was tried and never reached the deck menu.
+  - `qt/fields.qss`: one field style for every text input in Anki (QLineEdit, QComboBox, spin boxes), appended to the **app** stylesheet on profile open and on every theme change, with drawn chevrons `qt/chevron-*.svg`. An editable combo box's inner QLineEdit is kept bare.
   - `qtstyle.py` + `qt/*.qss`: Qt stylesheets for the Browse and Add / Edit windows, with `@token@` placeholders filled per theme. They are attached to the window, and also appended to the table and tree widgets' own stylesheets, because Anki gives those widgets stylesheets that outrank the window's.
   - `dev.py`: MX_DEV-only commands (below).
   - `quiet.py`: `MX_QUIET=1` launches. Anki's startup `activateWindow()` / `raise_()` calls are suppressed for 15 s so the screenshot script's relaunches don't take focus.
@@ -44,6 +45,8 @@ On SvelteKit pages, style by Anki's stable component classes (`.deck-options-pag
 5. `MX_DEV=1` enables two dev commands:
    - `pycmd('mx:shot:<path>')` saves `mw.grab()` (no title bar).
    - `pycmd('mx:open:browser')` / `mx:open:add` open the real window **off-screen** without activating it. `mx:grab:<name>:<path>` renders it, `mx:reloadqss` re-reads `qt/*.qss` into it (no relaunch needed), and `mx:close:<name>` closes it. Always close previews before quitting Anki: Anki saves window geometry on close, and dev.py restores the user's saved geometry, including again 2 s later, because Add Cards saves only after an async check.
+   - `pycmd('mx:gallery:<path>')` renders every input type under the app stylesheet, light and dark.
+   - To see tags without touching the collection, set tags on the **unsaved** Add draft with pyeval (`windows["add"].editor.note.tags = […]; editor.loadNote()`), capture, then clear them.
    - `pycmd('mx:pyeval:<path>|<expr>')` writes `repr(eval(expr))` to a file, with `mw` and `windows` (open previews) in scope. Use it to inspect widgets instead of guessing.
    - `pycmd('mx:menushot:<path>')` renders a sample menu in both themes to `<path>-light.png` / `-dark.png`, and writes `<path>-check.json`, which confirms that a menu built like Anki's carries the stylesheet and translucency.
    - `pycmd('mx:preview:deck-options/<deckId>')` renders that page in a hidden, off-screen view (titled `deck options` on the CDP list), so you can inspect and screenshot it without a window popping over the user's work. Hot-reload CSS there by bumping the `?v=` on `#mx-css`. It shows the user's real settings: never press Save in it.
@@ -73,6 +76,10 @@ On SvelteKit pages, style by Anki's stable component classes (`.deck-options-pag
 - **Qt and Anki activate the app while launching, even under `open -g`.** `MX_QUIET` stops Anki's own calls. `scripts/lib/keep-focus.swift` hands focus back for anything left, and it guards **only during the launch** (plus 2 s). Running it longer fights the user when they click into Anki on purpose, and its activation counts then include their clicks. Do not use `Qt::AA_PluginApplication` to suppress activation, because it changes Qt's menu-bar handling.
 - **Offscreen widget renders paint a square background.** `QWidget.grab()` and `render()` of an unshown translucent menu fill the corners, while the real popup is clean. The script masks the corners. Verify window chrome such as shadows and corners on the real popup, with the user.
 - **The note editor is a legacy page with a CSP that blocks inline scripts.** It is `aqt.editor_legacy.Editor` (a `legacyPageData` URL), not the SvelteKit editor. The inline boot `<script>` never runs there, so `macos.js` also reads the screen and accent from its own URL query string. The editor's scripts also rewrite `<html>`'s class and `data-mx`, so `macos.js` re-applies its markers whenever they are removed.
+- **A window stylesheet cascades into every dialog opened from it** (Choose Deck, Fields, Find and Replace). Attach only window-matching rules (`QDialog` / `QMainWindow`) to the window, and append the rest to the widgets that exist when it opens.
+- **Open windows must re-style on theme change.** macOS can switch appearance mid-session, so `on_theme_change` re-runs `restyle_window` for every open dialog in `aqt.dialogs._dialogs`.
+- **Restoring a patched Qt method:** save `QWidget.__dict__[name]`, never `getattr(QWidget, name)`. The latter returns an unbound function that, put back, stops binding and breaks every `show()`.
+- **Editor focus ring:** Anki's `.field-container` has `overflow: hidden`, which clips an outer ring, and it adds a 2px focus `outline`. Make the container visible, drop the outline, and keep `.dupe` as a red ring.
 - **Browse's table paints rows with `StatusDelegate`.** A transparent `gridline-color` still leaves white grid lines, so call `setShowGrid(False)`. Never add `QTableView::item` background rules, because they would hide Anki's flag, mark and suspended colours.
 - **`--launch-only` / `--fresh` relaunch; plain runs reuse.** A plain screenshot run reuses an Anki that already has debugging on, so it will not load new Python. Use `--fresh` after Python changes.
 - **Hidden labels still take up gap space.** Zero-size text keeps a flex gap. Round icon buttons need `gap: 0`.
@@ -104,6 +111,9 @@ node scripts/screenshots.mjs --deck "My Deck" --size 999x570
 | `--size WxH` | window size in points (default `999x570`) |
 | `--yes` | skip the "this quits Anki" confirmation |
 | `--keep-debug` | leave Anki running with debugging on |
+| `--fresh` | relaunch even if a debuggable Anki is running (after Python changes) |
+| `--launch-only` | relaunch with debugging and stop (for development) |
+| `--relaunch` | only relaunch Anki normally, guarded, with no captures |
 
 It needs Node 22+, the Xcode command-line tools, and **Screen Recording** permission for your terminal. Resizing the window also needs **Accessibility** permission. Use a profile whose decks you're happy to show publicly.
 

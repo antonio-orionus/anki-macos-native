@@ -360,6 +360,12 @@ async function confirm() {
 async function shoot() {
   mkdirSync(OUT, { recursive: true });
   await confirm();
+  if (flag("--relaunch")) return; // just relaunch normally (in finally), no captures
+  try {
+    if (run("defaults", ["read", "-g", "AppleInterfaceStyle"], { stdio: ["ignore", "pipe", "ignore"] }) === "Dark") {
+      console.warn("! macOS is in Dark mode: window frames in the light screenshots will be dark. Switch to Light for README shots.");
+    }
+  } catch { /* key absent: Light mode */ }
 
   // --launch-only exists to load new add-on code, so it always relaunches.
   if (!flag("--launch-only") && !flag("--fresh") && (await debuggableAnkiRunning())) {

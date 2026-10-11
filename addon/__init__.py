@@ -196,13 +196,16 @@ def restyle_window(window: Any) -> None:
         return
     accent = accent_hex() or "#0a60ff"
     qss = qtstyle.render(name, theme_manager.night_mode, accent, on_accent(accent))
-    window.setStyleSheet(qss)
-    # Anki gives some widgets their own stylesheet, which outranks the
-    # window's; append ours to theirs so ours wins where they conflict.
-    from aqt.qt import QPushButton, QTableView, QTreeView
+    # A window's stylesheet cascades into every dialog opened from it (Choose
+    # Deck, Find and Replace…), so style only the widgets this window has
+    # now. Appending also beats the stylesheets Anki sets on some of them.
+    from aqt.qt import QLabel, QPushButton, QSplitter, QTableView, QToolButton, QTreeView
 
-    for widget in window.findChildren(QTableView) + window.findChildren(QTreeView):
-        qtstyle.append(widget, qss)
+    window.setStyleSheet(qtstyle.window_rules(qss))
+    for kind in (QTableView, QTreeView, QToolButton, QPushButton, QLabel, QSplitter):
+        for widget in window.findChildren(kind):
+            if widget.window() is window:  # skip widgets inside child dialogs
+                qtstyle.append(widget, qss)
     for table in window.findChildren(QTableView):
         table.setShowGrid(False)  # Anki's row painter ignores a transparent grid colour
     add_button = getattr(window, "addButton", None)
@@ -210,6 +213,15 @@ def restyle_window(window: Any) -> None:
         add_button.setProperty("mxPrimary", True)
         add_button.style().unpolish(add_button)
         add_button.style().polish(add_button)
+
+
+def apply_fields() -> None:
+    if not config().get("restyle_windows", True):
+        return
+    from aqt.theme import theme_manager
+
+    accent = accent_hex() or "#0a60ff"
+    qtstyle.apply_app_fields(mw.app, theme_manager.night_mode, accent, on_accent(accent))
 
 
 def menu_qss() -> str:
@@ -279,6 +291,14 @@ def on_state_change(new_state: str, old_state: str) -> None:
 
 
 def on_theme_change() -> None:
+    apply_fields()
+    # Browse and Add pick their stylesheet when they open; repaint any that
+    # are open now (macOS can switch appearance mid-session).
+    import aqt
+
+    for _creator, instance in getattr(aqt.dialogs, "_dialogs", {}).values():
+        if instance is not None:
+            restyle_window(instance)
     accent = accent_hex()
     if not accent:
         return
@@ -297,6 +317,7 @@ def unified_titlebar_enabled() -> bool:
 
 
 def on_main_window_init() -> None:
+    apply_fields()
     if unified_titlebar_enabled():
         titlebar.install(mw)
 
@@ -307,6 +328,14 @@ if config().get("restyle_menus", True):
 quiet.install(mw)  # MX_QUIET only: dev relaunches never take focus
 
 dev.set_restyler(restyle_window)
+
+
+def _fields_for(night: bool) -> None:
+    accent = accent_hex() or "#0a60ff"
+    qtstyle.apply_app_fields(mw.app, night, accent, on_accent(accent))
+
+
+dev.set_field_styler(_fields_for)
 gui_hooks.browser_will_show.append(restyle_window)
 gui_hooks.add_cards_did_init.append(restyle_window)
 

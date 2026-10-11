@@ -7,6 +7,8 @@ they can be inspected and captured while the user keeps working:
     mx:grab:<name>:<path>            render it to a PNG
     mx:reloadqss                     re-read qt/*.qss into open windows
     mx:close:<name>                  close it and restore saved geometry
+    mx:gallery:<path>                render every input type, light and dark,
+                                     to <path>-light.png / <path>-dark.png
     mx:pyeval:<path>|<expression>    write repr(eval(expression)) to <path>;
                                      names: mw, windows (the open previews)
 
@@ -64,7 +66,9 @@ def open_window(name: str) -> None:
         _saved_profile.update(_geometry_keys())
     # Patch show/activate/raise on QWidget for the duration of construction;
     # Anki's dialogs call them from __init__ and from dialogs.open().
-    originals = {attr: getattr(QWidget, attr) for attr in ("show", "activateWindow", "raise_")}
+    # Save the raw class attributes: getattr() returns unbound functions that,
+    # put back with setattr, no longer bind to instances and break show().
+    originals = {attr: QWidget.__dict__[attr] for attr in ("show", "activateWindow", "raise_")}
     QWidget.show = _quiet_show  # type: ignore[method-assign]
     QWidget.activateWindow = lambda self: None  # type: ignore[method-assign]
     QWidget.raise_ = lambda self: None  # type: ignore[method-assign]
@@ -111,6 +115,54 @@ def _restore_geometry(snapshot: dict[str, Any]) -> None:
             del profile[key]
 
 
+_apply_fields: Callable[[bool], None] = lambda night: None
+
+
+def set_field_styler(fn: Callable[[bool], None]) -> None:
+    global _apply_fields
+    _apply_fields = fn
+
+
+def gallery(path: str) -> None:
+    """Render a form with every input type under the app stylesheet."""
+    from aqt.qt import (
+        QColor, QComboBox, QDoubleSpinBox, QFontComboBox, QFormLayout, QLineEdit, QSpinBox,
+    )
+    from aqt.theme import theme_manager
+
+    for night in (False, True):
+        _apply_fields(night)
+        form = QWidget()
+        form.setAttribute(Qt.WidgetAttribute.WA_DontShowOnScreen, True)
+        layout = QFormLayout(form)
+        empty = QLineEdit()
+        empty.setPlaceholderText("Text to show inside the field when it's empty")
+        filled = QLineEdit("Probability")
+        search = QComboBox()
+        search.setEditable(True)
+        search.lineEdit().setPlaceholderText("Search cards/notes (type text, then press Enter)")
+        font = QFontComboBox()
+        plain = QComboBox()
+        plain.addItems(["Sequential (oldest cards first)", "Random"])
+        spin = QSpinBox()
+        spin.setValue(20)
+        dspin = QDoubleSpinBox()
+        dspin.setValue(2.5)
+        for label, widget in (("Description", empty), ("Name", filled), ("Search", search),
+                              ("Editing Font", font), ("Order", plain), ("Size", spin), ("Ease", dspin)):
+            layout.addRow(label, widget)
+        form.setAutoFillBackground(True)
+        palette = form.palette()
+        palette.setColor(palette.ColorRole.Window, QColor("#1e1e1f" if night else "#f5f5f7"))
+        palette.setColor(palette.ColorRole.WindowText, QColor("#eeeeee" if night else "#111111"))
+        form.setPalette(palette)
+        form.resize(560, 300)
+        form.show()
+        form.grab().save(f"{path}-{'dark' if night else 'light'}.png")
+        form.deleteLater()
+    _apply_fields(theme_manager.night_mode)
+
+
 def handle(kind: str, payload: str) -> bool:
     """Returns True when the message was a dev command."""
     if not enabled():
@@ -124,6 +176,8 @@ def handle(kind: str, payload: str) -> bool:
         reload_qss()
     elif kind == "close":
         close_window(payload)
+    elif kind == "gallery":
+        gallery(payload)
     elif kind == "pyeval":
         path, _, expression = payload.partition("|")
         try:

@@ -1245,11 +1245,72 @@ html.mx[data-mx="editor"] .tag-editor {
   background: var(--mx-field) !important;
   box-shadow: inset 0 0 0 0.5px var(--mx-field-edge), 0 0.5px 1px rgb(0 0 0 / 0.05) !important;
 }
+/* Anki clips the field container and draws a 2px outline on focus; let the
+   ring show outside the field instead, as macOS does. A duplicate note keeps
+   its warning, as a red ring. */
+html.mx[data-mx="editor"] .field-container {
+  overflow: visible !important;
+  background: transparent !important;
+}
 html.mx[data-mx="editor"] .editor-field:focus-within,
 html.mx[data-mx="editor"] .tag-editor:focus-within {
+  outline: none !important;
   box-shadow: 0 0 0 3.5px color-mix(in srgb, var(--mx-accent) 45%, transparent) !important;
 }
-html.mx[data-mx="editor"] .tag-editor { min-height: 30px; padding: 2px 6px !important; }
+html.mx[data-mx="editor"] .editor-field.dupe,
+html.mx[data-mx="editor"] .editor-field.dupe:focus-within {
+  outline: none !important;
+  box-shadow: 0 0 0 3.5px color-mix(in srgb, var(--mx-red) 50%, transparent) !important;
+}
+/* Tags: accent-tinted capsules with an even gap; the delete icon stays
+   quiet until hovered. */
+html.mx[data-mx="editor"] .tag-editor {
+  align-items: center !important;
+  gap: 4px;
+  min-height: 32px;
+  margin: 0 !important;
+  padding: 5px 6px !important;
+}
+html.mx[data-mx="editor"] .tag-editor > *,
+html.mx[data-mx="editor"] .tag-editor .tag-relative { margin: 0 !important; padding: 0 !important; }
+html.mx[data-mx="editor"] .tag-editor .tag-options-button {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 2px !important;
+  color: var(--mx-label-3);
+}
+html.mx[data-mx="editor"] .tag-editor .tag-add-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+}
+html.mx[data-mx="editor"] .tag-editor .tag-add-button svg { padding: 0 !important; }
+html.mx[data-mx="editor"] .tag-editor .tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 22px;
+  padding: 0 5px 0 9px !important;
+  border: none !important;
+  border-radius: 999px !important;
+  background: color-mix(in srgb, var(--mx-accent) 13%, transparent) !important;
+  box-shadow: none !important;
+  color: var(--mx-label) !important;
+  font: 500 12px/22px var(--mx-font) !important;
+}
+html.mx[data-mx="editor"] .tag-editor .tag:hover { background: color-mix(in srgb, var(--mx-accent) 20%, transparent) !important; }
+html.mx[data-mx="editor"] .tag-editor .tag.selected {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--mx-accent) 55%, transparent) !important;
+}
+html.mx[data-mx="editor"] .tag-editor .tag svg {
+  width: 12px;
+  height: 12px;
+  opacity: 0.4;
+  fill: currentColor;
+}
+html.mx[data-mx="editor"] .tag-editor .tag:hover svg { opacity: 0.85; }
+html.mx[data-mx="editor"] .tag-editor .tag-input { font: 400 13px/22px var(--mx-font) !important; }
 
 /* ================================================================= motion */
 

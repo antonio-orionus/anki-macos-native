@@ -1,0 +1,50 @@
+/* Every text input in Anki: one field style. Applied app-wide, so dialogs
+   (Fields, Find and Replace, Preferences…) match Browse and Add. */
+
+QLineEdit, QComboBox, QAbstractSpinBox {
+    background: @field@;
+    border: 1px solid @field_edge@;
+    border-radius: 8px;
+    padding: 2px 8px;
+    min-height: 22px;
+    color: @label@;
+    selection-background-color: @accent@;
+    selection-color: @on_accent@;
+}
+/* Focus changes colour, never width, so text does not shift. */
+QLineEdit:focus, QComboBox:focus, QAbstractSpinBox:focus { border: 1px solid @accent@; }
+QLineEdit:disabled, QComboBox:disabled, QAbstractSpinBox:disabled { color: @label3@; }
+
+/* An editable combo box holds a line edit of its own: keep it bare. */
+QComboBox QLineEdit {
+    background: transparent;
+    border: none;
+    padding: 0;
+    min-height: 0;
+}
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: center right;
+    width: 18px;
+    border: none;
+}
+QComboBox::down-arrow { image: url("@qtdir@/chevron-down-@theme@.svg"); width: 10px; height: 10px; }
+QComboBox QAbstractItemView {
+    background: @group@;
+    border: 1px solid @field_edge@;
+    selection-background-color: @accent@;
+    selection-color: @on_accent@;
+    outline: 0;
+}
+
+QAbstractSpinBox { padding-right: 18px; }
+QAbstractSpinBox::up-button, QAbstractSpinBox::down-button {
+    subcontrol-origin: border;
+    width: 16px;
+    border: none;
+    background: transparent;
+}
+QAbstractSpinBox::up-button { subcontrol-position: top right; margin-top: 2px; }
+QAbstractSpinBox::down-button { subcontrol-position: bottom right; margin-bottom: 2px; }
+QAbstractSpinBox::up-arrow { image: url("@qtdir@/chevron-up-@theme@.svg"); width: 9px; height: 9px; }
+QAbstractSpinBox::down-arrow { image: url("@qtdir@/chevron-down-@theme@.svg"); width: 9px; height: 9px; }

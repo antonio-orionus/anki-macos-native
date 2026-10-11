@@ -7,6 +7,7 @@ attached to that window only, so the rest of Anki keeps its native drawing.
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Any
 
@@ -51,10 +52,39 @@ def render(name: str, night: bool, accent: str, on_accent: str) -> str:
     if not path.exists():
         return ""
     text = path.read_text(encoding="utf-8")
-    tokens = {**(DARK if night else LIGHT), "accent": accent, "on_accent": on_accent}
+    tokens = {
+        **(DARK if night else LIGHT),
+        "accent": accent,
+        "on_accent": on_accent,
+        "theme": "dark" if night else "light",
+        "qtdir": QSS_DIR.as_posix(),
+    }
     for key, value in tokens.items():
         text = text.replace(f"@{key}@", value)
     return text
+
+
+MARK = "/* macos-native:fields */"
+
+
+def apply_app_fields(app: Any, night: bool, accent: str, on_accent: str) -> None:
+    """Append the field stylesheet to the application's, replacing any copy
+    from an earlier theme. Anki rewrites the app stylesheet on theme change,
+    so this runs again then."""
+    base = app.styleSheet().split(MARK)[0]
+    app.setStyleSheet(f"{base}\n{MARK}\n{render('fields', night, accent, on_accent)}")
+
+
+def window_rules(qss: str) -> str:
+    """Only the rules for the window itself (QDialog / QMainWindow), which
+    child dialogs of other types do not match."""
+    blocks = re.findall(r"([^{}]+)\{([^{}]*)\}", qss)
+    keep = []
+    for selector, body in blocks:
+        names = [part.strip() for part in re.sub(r"/\*.*?\*/", "", selector, flags=re.S).split(",")]
+        if names and all(n in ("QDialog", "QMainWindow", "QMainWindow > QWidget") for n in names):
+            keep.append(f"{', '.join(names)} {{{body}}}")
+    return "\n".join(keep)
 
 
 def append(widget: Any, qss: str) -> None:
